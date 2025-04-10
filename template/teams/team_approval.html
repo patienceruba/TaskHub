@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Approve or Reject Join Requests for Team: {{ team.name }}</h2>
+  
+  {% if team.requests.exists %}
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Message</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for request in team.requests.all %}
+          <tr>
+            <td>{{ request.user.username }}</td>
+            <td>{{ request.message }}</td>
+            <td>{{ request.status }}</td>
+            <td>
+              {% if request.status == 'Pending' %}
+                <a href="{% url 'approve_request' request.id team.id %}?next={{ request.path }}" class="btn btn-success">Approve</a>
+                <a href="{% url 'reject_request' pk=request.pk %}" class="btn btn-danger">Reject</a>
+              {% else %}
+                <span>Already {{ request.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No pending requests.</p>
+  {% endif %}
+{% endblock %}

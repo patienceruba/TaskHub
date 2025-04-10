@@ -1,0 +1,96 @@
+
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section class="wrapper">
+    
+    <section id="view-section" class="section1">
+        <div class="view-list">
+            <h2>seach result for  "{{query}}"</h2>
+                {% for result in results %}
+                        <a href=""><img src="{{ contents.image.url }}" alt="{{ contents.title }}" align="{{ contents.title }}"></a>
+                        <a href="">{{result.title}}</a>
+                        <p>{{result.start_date}}</p>
+                        
+                        {% if user.is_staff %}
+                        <p id="update-btn"><a href="{% url 'update'  result.id%}">Update</a></p>
+                        <p id="dlt-btn"><a href="{% url 'delete'  result.id%}">Delete</a></p>
+                        {% endif %}
+
+                </tr>
+                {% endfor %}
+            </table>        
+        </div>
+    </section>
+</section>
+<section>
+    <span> <p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+<style type="text/css">
+    /* Basic Reset */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+}
+
+/* Main Content Section */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7fa;
+}
+
+
+
+.view-list h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.view-list a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 20px;
+    display: block;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+.view-list a:hover {
+    color: #3498db;
+}
+
+.view-list p {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+#update-btn, #dlt-btn {
+    margin-top: 10px;
+}
+
+#update-btn a, #dlt-btn a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+#update-btn a:hover, #dlt-btn a:hover {
+    color: #1abc9c;
+}
+
+/* Footer Styles */
+section span {
+    display: block;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #2c3e50;
+    color: #fff;
+}
+</style>
+{% endblock %}

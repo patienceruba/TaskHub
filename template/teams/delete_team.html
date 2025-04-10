@@ -1,0 +1,36 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section id="wrapper">
+    <form method="POST">
+        {% csrf_token %}
+        <p id="sure"><strong></strong></p>
+        <button type="submit">Delete</button>
+        <a href="{{ request.META.HTTP_REFERER|default:'/' }}" id="nope">No</a>
+    </form>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sureElement = document.getElementById("sure");
+    const placeholderText = "Are you sure you want to delete this '{{ item.team.title }}' team?";  
+    let i = 0;
+
+    function typeText() {
+        if (i < placeholderText.length) {
+            sureElement.textContent = placeholderText.substring(0, i + 1);
+            i++;
+            setTimeout(typeText, 100); // Adjust typing speed here
+        }
+    }
+
+    typeText();
+});
+</script>
+<style type="text/css">
+   #wrapper{
+    background-color: grey;
+   }
+</style>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% load static %}
+<nav>
+    <h1><a href="{% url 'dashboard' %}">DoiZ</a></h1>
+    <div class="nav">
+        <form method="GET" action="{% url 'search' %}">
+            {% if request.path == '/event' or request.path == '/home' %}
+                <div class="search-container">
+                    <div class="search-input-container">
+                        <span class="material-symbols-outlined search-icon">search</span>
+                        <!-- Add hidden redirect field depending on where the search is coming from -->
+                        <input type="hidden" name="redirect" value="{% if redirect_to %}{{ redirect_to }}{% endif %}">
+                        <input type="search" name="search" value="{{ query }}" placeholder="Search..." id="search" required>
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+        <ul>
+            <!-- Notification Bell -->
+            <div class="notification-bell">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="badge" id="notification-count">0</span>
+            </div>
+
+            <!-- Profile Dropdown -->
+            <li class="profile-dropdown">
+                <img src="{% if user.userprofile.profile_picture %}{{ user.userprofile.profile_picture.url }}{% else %}{% static 'image/User-Account-Person-PNG-File.png' %}{% endif %}" 
+                     alt="Profile Picture" width="30" height="30" id="profile-pic">
+                
+                <div class="dropdown-menu" id="profile-dropdown">
+                    <a href="">Edit Profile</a>
+                    
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- CSS Styles -->
+<style>
+    /* Notification Bell */
+    .notification-bell {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+    
+    .badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background-color: red;
+        color: white;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 50%;
+        display: none; /* Hidden when count is zero */
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: rgb(110, 99, 99);
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        min-width: 150px;
+        z-index: 1000;
+    }
+
+    .dropdown-menu a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: black;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #f1f1f1;
+    }
+</style>
+
+<!-- JavaScript for Functionality -->
+<script>
+    // Fetch Unread Notification Count
+    async function fetchUnreadCount() {
+        try {
+            const response = await fetch('/api/unread-notifications/');
+            if (response.ok) {
+                const data = await response.json();
+                const badge = document.getElementById('notification-count');
+                const unreadCount = data.unread_count;
+
+                // Update the badge count
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'inline-block'; // Show badge
+                } else {
+                    badge.style.display = 'none'; // Hide badge if count is zero
+                }
+            } else {
+                console.error('Failed to fetch unread notifications count');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Fetch unread count when the page loads
+    document.addEventListener('DOMContentLoaded', fetchUnreadCount);
+
+    // Optional: Poll for updates every 30 seconds
+    setInterval(fetchUnreadCount, 30000);
+
+    // Toggle Profile Dropdown Menu
+    document.addEventListener("DOMContentLoaded", function () {
+        const profilePic = document.getElementById("profile-pic");
+        const dropdownMenu = document.getElementById("profile-dropdown");
+
+        profilePic.addEventListener("click", function (event) {
+            dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+            event.stopPropagation(); // Prevent closing when clicking on the profile picture
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!profilePic.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.style.display = "none";
+            }
+        });
+    });
+</script>

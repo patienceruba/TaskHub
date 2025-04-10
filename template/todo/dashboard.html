@@ -1,0 +1,167 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+<section class="wrapper">
+<div class="side-bar">
+    
+    <ul>
+        
+        <!--<div class="toggle-sidebar">
+            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+            <span class="sidebar-text"></span>
+        </div>-->
+        <a href="{% url 'dashboard' %}"><li>
+            <span class="material-symbols-outlined">dashboard_customize</span>
+            <span class="sidebar-text">Dashboard</span>
+        </li></a>
+
+        {% if user.is_staff %}
+        <a href="{% url 'add' %}"><li>
+            <span class="material-symbols-outlined">add</span>
+            <span class="sidebar-text">Add Task</span>
+        </li></a>
+
+        <a href="{% url 'home' %}"><li>
+            <span class="material-symbols-outlined">view_list</span>
+            <span class="sidebar-text">View Task</span>
+        </li></a>
+        {% endif %}
+
+        <a href="{% url 'today' %}"><li>
+            <span class="material-symbols-outlined">today</span>
+            <span class="sidebar-text">Today</span>
+        </li></a>
+
+        <a href="{% url 'event' %}"><li>
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <span class="sidebar-text">Tasks</span>
+        </li></a>
+
+        <a href="{% url 'task_done' %}"><li>
+            <span class="material-symbols-outlined">task</span>
+            <span class="sidebar-text">Done</span>
+        </li></a>
+
+        <a href="{% url 'list_teams' %}" id="team"><li>
+            <span class="material-symbols-outlined">groups</span>
+            <span class="sidebar-text">Team</span></li></a>
+
+        <a href="{% url 'calendar' %}"><li>
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="sidebar-text">Calendar</span>
+        </li></a>
+
+
+ 
+    </ul>
+</div>
+
+    
+<section id="dashboard-wrapper">
+<!-- User Information Section -->
+    <section id="user-info-section" class="section1">
+        <div class="user-info-container">
+            <div class="user-profile">
+                {% if user.userprofile.profile_picture %}
+                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" width="150" height="150">
+                {% else %}
+                <img src="{% static 'image/User-Account-Person-PNG-File.png' %}" alt="Default Profile Picture" width="150" height="150">
+                {% endif %}
+            </div>
+            <div class="user-details">
+                <h3>{{ user.get_full_name }}</h3>
+                <p>Email: {{ user.email }}</p>
+                <p>Username: {{ user.username }}</p>
+                 <!-- Change Profile Picture Form -->
+                <form method="POST" enctype="multipart/form-data" action="{% url 'update_profile_picture' %}">
+                    {% csrf_token %}
+                    <label for="profile-picture">Change Profile Picture:</label>
+                    <input type="file" name="profile_picture" id="profile-picture" accept="image/*" required>
+                    <button type="submit" class="btn">Update</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+<!-- Dashboard Statistics Section -->
+        <section id="dashboard-section" class="section1">
+            <div class="dashboard-container">
+                <div class="dashboard-item">
+                        {% if total_tasks %}
+                        <a href="{% url 'event' %}">
+                            <h3>Total Tasks</h3>
+                            <p>{{ total_tasks }}</p>
+                        </a>
+                        {% else %}
+                        <h3>Total Tasks</h3>
+                        <p>0</p>
+                        {% endif %}
+                </div>
+                
+                
+                <div class="dashboard-item">
+                        {% if tasks_completed %}
+                            <a href="{% url 'task_done' %}">
+                                <h3>Tasks Completed</h3>
+                                <p>{{ tasks_completed }} </p>
+                            </a>
+                        {% else %}
+                            <h3>Tasks Completed</h3>
+                            <p>0</p>
+                        {% endif %}
+
+                </div>                
+                <div class="dashboard-item">
+                    {% if assigned_tasks %}
+                    <a href="{% url 'event' %}">
+                    <h3>Assigned Task</h3>
+                    <p>{{ assigned_tasks }}</p>
+                    </a>
+                    {% else %}
+                        <h3>Assigned Task</h3>
+                        <p>0</p>
+                    {% endif %}
+                </div>
+                
+                
+                <div class="dashboard-item">
+                    {% if teams %}
+                    <a href="{% url 'teamMembership' %}">
+                    <h3>Teams</h3>
+                    <p>{{teams}}</p>
+                    </a>
+                    {% else %}
+                        <h3>Teams</h3>
+                        <p>0</p>
+                    {% endif %}
+                </div>
+                <div class="dashboard-item">
+                    <a href="">
+                    <h3>Task in Progress</h3>
+                    <p>0</p>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="chart-wrapper">
+                <!-- Adding Task Statistics Graphics -->
+                <div class="chart-container" id="chart1">
+                    <canvas id="taskBarChart"></canvas>
+                </div>
+                <div class="chart-container" id="chart2">
+                    <canvas id="taskPieChart"></canvas>
+                </div>
+            </div>
+        <section class="footer">
+            <span><p>&copy; Powered By I-Mind Company. All Rights Reserved.</p></span>
+        </section>
+    </section>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+{% endblock %}
+
+

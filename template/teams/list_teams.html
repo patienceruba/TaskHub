@@ -1,0 +1,202 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section class="wrapper">
+   <div class="side-bar">
+    
+    <ul>
+        
+        <!--li class="toggle-sidebar">
+            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+            <span class="sidebar-text">Menu</span>
+        </li>-->
+        <a href="{% url 'dashboard' %}"><li>
+            <span class="material-symbols-outlined">dashboard_customize</span>
+            <span class="sidebar-text">Dashboard</span>
+        </li></a>
+
+        {% if user.is_staff %}
+        <a href="{% url 'add' %}"><li>
+            <span class="material-symbols-outlined">add</span>
+            <span class="sidebar-text">Add Task</span>
+        </li></a>
+
+        <a href="{% url 'home' %}"><li>
+            <span class="material-symbols-outlined">view_list</span>
+            <span class="sidebar-text">View Task</span>
+        </li></a>
+        {% endif %}
+
+        <a href="{% url 'today' %}"><li>
+            <span class="material-symbols-outlined">today</span>
+            <span class="sidebar-text">Today</span>
+        </li></a>
+
+        <a href="{% url 'event' %}"><li>
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <span class="sidebar-text">Tasks</span>
+        </li></a>
+
+        <a href="{% url 'task_done' %}"><li>
+            <span class="material-symbols-outlined">task</span>
+            <span class="sidebar-text">Done</span>
+        </li></a>
+
+        <a href="{% url 'list_teams' %}" id="team"><li>
+            <span class="material-symbols-outlined">groups</span>
+            <span class="sidebar-text">Team</span></li></a>
+
+        <a href="{% url 'calendar' %}"><li>
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="sidebar-text">Calendar</span>
+        </li></a>
+
+    </ul>
+</div>
+
+
+    <section class="content-wrapper">
+        <section>
+            <div id="createTeam">
+                {% if user.is_staff %}
+                <a href="{% url 'create_team' %}" id="create-team">Create Team</a>
+                {% endif %}
+            </div>
+        </section>
+        <hr color="white">
+        <div class="content-container">
+            
+            <h1>Available Teams</h1>
+            <hr color="white">
+            <ul>
+                {% for item in teams %}
+                <li>
+                    <div id="team-card">
+                        <h3>{{ item.team.name }}</h3>
+                        {% if item.team.image %}
+                            <img src="{{ item.team.image.url }}" alt="{{ item.team.name }}" id="img" width="250" height="150">
+                        {% else %}
+                            <p>No image available for this team.</p>
+                        {% endif %}
+                        <br>
+                        {% if item.is_member %}
+                            <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">View Details</a>
+                            <a href="{% url 'chatapp' item.team.id %}">chat</a>
+                            <hr color="white">
+                            {% if user.is_staff %}
+                                <a href="{% url 'delete_team' item.team.id %}" id="delete">Delete</a>
+                            {% endif %}
+                        {% else %}
+                            {% if item.is_pending %}
+                                <button disabled class="btn-disabled">Request Sent</button>
+                            {% else %}
+                                <a href="{% url 'join_team_request' item.team.id %}" class="btn-request">Request to Join</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        
+    </section>
+    
+</section>
+
+<section class="footer">
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+
+<style>
+    .content-wrapper {
+        margin-top: 2%;
+        margin-left: 20px;
+        width: 97%;
+    }
+    .content-container ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+    .content-container li {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        min-height: 200px;
+    }
+    .content-container li:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    #view-details-btn, .btn-request, .btn-disabled {
+        display: inline-block;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 10px;
+        transition: 0.3s;
+        text-align: center;
+    }
+    #delete{
+        /*border: 1px solid black;*/
+        background-color: red; 
+        padding: 5px 20px;
+        border-radius: 10px;
+    }
+    #view-details-btn{
+        background-color: greenyellow; 
+        padding: 5px 20px;
+        border-radius: 10px;
+        margin-left: 6%;
+    }
+    #view-details-btn:hover, #delete:hover{
+        color: wheat;
+    }
+    .btn-request {
+        background-color: blue;
+        color: white;
+    }
+    .btn-request:hover {
+        background-color: skyblue;
+    }
+    .btn-disabled {
+        background-color: gray;
+        color: white;
+        cursor: not-allowed;
+    }
+    #create-team {
+        /*display: block;*/
+        padding: 10px 20px;
+        margin-top: 20px;
+        background-color: #2c3e50;
+        color: #fff;
+        border-radius: 10px;
+        text-align: center;
+        /*margin-left: 15%;*/
+    }
+    @media (max-width: 768px) {
+        .content-container ul {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 480px) {
+        .content-container ul {
+            grid-template-columns: 1fr;
+        }
+    }
+    h3{
+        text-align: center;
+    }
+</style>
+
+{% endblock %}

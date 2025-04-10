@@ -1,0 +1,223 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section class="wrapper">
+    <div class="side-bar">
+    
+        <ul>
+            
+            <!--<div class="toggle-sidebar">
+                <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+                <span class="sidebar-text"></span>
+            </div>-->
+            <a href="{% url 'dashboard' %}"><li>
+                <span class="material-symbols-outlined">dashboard_customize</span>
+                <span class="sidebar-text">Dashboard</span>
+            </li></a>
+    
+            {% if user.is_staff %}
+            <a href="{% url 'add' %}"><li>
+                <span class="material-symbols-outlined">add</span>
+                <span class="sidebar-text">Add Task</span>
+            </li></a>
+    
+            <a href="{% url 'home' %}"><li>
+                <span class="material-symbols-outlined">view_list</span>
+                <span class="sidebar-text">View Task</span>
+            </li></a>
+            {% endif %}
+    
+            <a href="{% url 'today' %}"><li>
+                <span class="material-symbols-outlined">today</span>
+                <span class="sidebar-text">Today</span>
+            </li></a>
+    
+            <a href="{% url 'event' %}"><li>
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span class="sidebar-text">Tasks</span>
+            </li></a>
+    
+            <a href="{% url 'task_done' %}"><li>
+                <span class="material-symbols-outlined">task</span>
+                <span class="sidebar-text">Done</span>
+            </li></a>
+    
+            <a href="{% url 'list_teams' %}" id="team"><li>
+                <span class="material-symbols-outlined">groups</span>
+                <span class="sidebar-text">Team</span></li></a>
+    
+            <a href="{% url 'calendar' %}"><li>
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="sidebar-text">Calendar</span>
+            </li></a>
+    
+    
+
+        </ul>
+    </div>
+    </div>
+
+    <section class="content-wrapper">
+
+        <section id="view-section" class="section1">
+            <h1>Available Task for you</h1>
+            <div class="content-container">
+                
+                {% if user.is_staff %}
+                    {% for task in tasks %}
+                    <div class="content-item">
+                        <a href="{% url 'task_detail' task.id %"><img src="{{ task.image.url }}" alt="{{ task.title }}" align="{{ task.title }}"></a>
+                        <a href="{% url 'task_detail' task.id %}">{{ task.title }}</a>
+                        <p>{{ task.start_date }}</p>
+                        <p>{{ task.end_date }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Check if assigned_tasks exists and has tasks -->
+                    {% if assigned_tasks %}
+                        <ul>
+                            {% for task in assigned_tasks %}
+                                <div class="content-item">
+                                    <a href="{% url 'task_detail' task.id %"><img src="{{ task.task.image.url }}" alt="{{ task.task.title }}" align="{{ task.task.title }}"></a>
+                                    <a href="{% url 'task_detail' task.id %}">{{ task.task.title }}</a>
+                                    <p>{{ task..start_date }}</p>
+
+
+                                    {% if task.title in task_done_list %}
+                                        <div id="enroll">
+                                            <span>Already Enrolle</span>
+                                        </div>
+                                    {% else %}
+                                        {% if task.start_date and task.start_date < now %}
+                                            <div id="">
+                                                <a href=""></a><span class="enroll-disabled">Opps</span>
+                                            </div>
+                                        {% else %}
+                                            <div id="enroll">
+                                                <a href="{% url 'task_detail' task.id %}">start</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No tasks assigned to you yet.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+    </section>
+        <section class="footer">
+            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+        </section>
+    </section>
+</section>
+
+
+<style type="text/css">/* General Styling for Content Section */
+.content-wrapper {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.content-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    gap: 20px;
+    padding: 10px;
+}
+
+/* Styling for Content Items */
+.content-item {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.content-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling for Images */
+.content-item img {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    object-fit: cover;
+}
+
+/* Styling for Titles */
+.content-item a {
+    text-decoration: none;
+    color: #007bff;
+    font-size: 1rem;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.content-item a:hover {
+    color: #0056b3;
+}
+
+/* Styling for Dates */
+.content-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Enrollment Section Styling */
+#enroll {
+    margin-top: 10px;
+}
+
+#enroll a {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+#enroll a:hover {
+    background-color: #218838;
+}
+
+.enroll-disabled {
+    color: red;
+    font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .content-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .content-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .content-container {
+        grid-template-columns: 1fr; /* Single column for very small screens */
+    }
+}
+</style>
+
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section class="wrapper">
+    <div class="side-bar">
+    
+    <ul>
+        
+        <!--<div class="toggle-sidebar">
+            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+        </div>-->
+        <a href="{% url 'dashboard' %}"><li>
+            <span class="material-symbols-outlined">dashboard_customize</span>
+            <span class="sidebar-text">Dashboard</span>
+        </li></a>
+
+        {% if user.is_staff %}
+        <a href="{% url 'add' %}"><li>
+            <span class="material-symbols-outlined">add</span>
+            <span class="sidebar-text">Add Task</span>
+        </li></a>
+
+        <a href="{% url 'home' %}"><li>
+            <span class="material-symbols-outlined">view_list</span>
+            <span class="sidebar-text">View Task</span>
+        </li></a>
+        {% endif %}
+
+        <a href="{% url 'today' %}"><li>
+            <span class="material-symbols-outlined">today</span>
+            <span class="sidebar-text">Today</span>
+        </li></a>
+
+        <a href="{% url 'event' %}"><li>
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <span class="sidebar-text">Tasks</span>
+        </li></a>
+
+        <a href="{% url 'task_done' %}"><li>
+            <span class="material-symbols-outlined">task</span>
+            <span class="sidebar-text">Done</span>
+        </li></a>
+
+        <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+
+        <a href="{% url 'calendar' %}"><li>
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="sidebar-text">Calendar</span>
+        </li></a>
+
+
+        <a href="{% url 'logout' %}"><li>
+            <span class="material-symbols-outlined">logout</span>
+            <span class="sidebar-text">Logout</span>
+        </li></a>
+    </ul>
+</div>
+
+
+  <section id="view-section" class="section1">
+    <div class="content-container">
+        {% for contents in content %}
+            <div class="content-item">
+                <a href=""><img src="{{ contents.image.url }}" alt="{{ contents.title }}" align="{{ contents.title }}" width="200" height="200"></a>
+                <a href="">{{ contents.title }}</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+</section>
+
+<section>
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+
+<style type="text/css">
+    span {
+        cursor: pointer;
+    }
+.content-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+    gap: 20px; /* Space between grid items */
+    justify-items: center; /* Center items horizontally */
+    
+}
+
+.content-item {
+    text-align: center;
+}
+
+.content-item img {
+    display: block;
+    margin: 0 auto; /* Center the image */
+    max-width: 100%; /* Ensure the image scales with container size */
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+#view-section {
+    background: #D3D3D3;
+    overflow: hidden;
+    scroll-behavior: smooth;
+}
+.content-item img{
+    border-radius: 20px;
+}
+</style>
+
+<script type="text/javascript">
+
+</script>
+
+{% endblock %}

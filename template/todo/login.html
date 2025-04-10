@@ -1,0 +1,211 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Doiz Projects</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> <!-- Add a CSS file if needed -->
+</head>
+<body>
+
+<section class="login-reg">
+    <div class="img">
+        <h1 id="Doiz">Doiz Projects</h1>
+    </div>
+
+    <div class="login">
+        <div class="ops"> 
+            <h1>LOGIN</h1>
+
+            <!-- Error Message Display -->
+            
+            {% if error_message %}
+            <div class="message">
+                <p class="error-message">{{ error_message }}</p>
+                <script>
+                    alert("{{ error_message }}");
+                </script>
+            </div>
+            {% endif %}
+            
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Username" id="username" required>
+                <input type="password" name="password" placeholder="Password" id="password" required>
+                <button type="submit" name="login" id="login">Login</button>
+            </form>
+
+            <div class="remember">
+                <div class="options">
+                    <label for="remember-me">
+                        <input type="checkbox" name="remember" id="remember-me"> Remember Me
+                    </label>
+                    <a href="{% url 'password_reset_request' %}" class="forgot-password">Forgot Password?</a>
+                </div>
+                <p id="link">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+            </div>
+        </div>
+
+        <section class="footer">
+            <span><p>&copy; Powered By I-Mind Company. All Rights Reserved.</p></span>
+        </section>
+    </div>
+</section>
+
+<style>
+    /* General body styling */
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    .login-reg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .img {
+        width: 50%;
+        height: 650px;
+        background-image: url("{% static 'image/task-management-dependencies.png' %}");
+        
+    }
+
+    .login {
+        width: 50%;
+        height: 484px;
+        padding-top: 10%;
+        /*background: #2c3e50;*/
+    }
+
+    #Doiz {
+        text-align: center;
+        font-size: 50px;
+        margin-top: 55%;
+        color: #2c3e50;
+    }
+
+    .ops {
+        width: 50%;
+        margin-left: 28%;
+    }
+
+    .login h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .login input[type="text"],
+    .login input[type="password"],
+    .login button {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 34px;
+        border: none;
+        outline: none;
+        border-bottom: 1px solid #2c3e50;
+        background-color: transparent;
+        font-size: 16px;
+    }
+    .message{
+        background: red;
+        width: 100%;
+        padding: 10px 20px;
+    }
+    .login button {
+        background-color: #2c3e50;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 87%;
+    }
+
+    .login button:hover {
+        background-color: #0056b3;
+    }
+
+    .options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .options label {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .forgot-password {
+        font-size: 14px;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .forgot-password:hover {
+        text-decoration: underline;
+    }
+
+    #link {
+        margin-top: 15px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    #link a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    #link a:hover {
+        text-decoration: underline;
+    }
+
+    .login input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    span p {
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    /* Error message styling */
+    .error-message {
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const sureElement = document.getElementById("Doiz");
+        const placeholderText = "Doiz PROJECTS";
+        let i = 0;
+
+        function typeText() {
+            if (i < placeholderText.length) {
+                sureElement.textContent = placeholderText.substring(0, i + 1);
+                i++;
+                setTimeout(typeText, 200);
+            }
+        }
+
+        typeText();
+    });
+</script>
+
+</body>
+</html>

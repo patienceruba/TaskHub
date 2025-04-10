@@ -1,0 +1,206 @@
+{% extends "todo/main.html" %}
+{% block content %}
+<!-- Chat Section -->
+<section id="view-section">
+    <div class="chat-wrapper">
+        <div class="chat-section">
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <h2>Team Chat</h2>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-box" id="chat-box">
+                {% for message in messages %}
+                <div class="message {% if message.sender == user.username %}sent{% endif %}">
+                    <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
+                </div>
+                {% empty %}
+                <p>No messages yet. Start the conversation!</p>
+                {% endfor %}
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input">
+                <form id="chat-form" action="{% url 'send_message' team_id=item.team.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" id="chat-input" name="message" placeholder="Type a message..." required>
+                    <button type="submit" id="send-btn">Send</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<section class="footer">
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+
+<!-- Inline Styles -->
+<style>
+    #view-section{
+        width: 80%;
+        margin: 5% 10%;
+    }
+    .chat-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 500px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 20px;
+    }
+
+    .chat-header {
+        background-color:#2c3e50;
+        padding: 10px 15px;
+        border-radius: 8px 8px 0 0;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .chat-box {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-top: 20px;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        background-color: #e0f7fa;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 70%;
+    }
+
+    .message.sent {
+        background-color: #e3f2fd;
+        align-self: flex-end;
+    }
+
+    .message p {
+        margin: 0;
+    }
+
+    .chat-input {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+
+    }
+
+    .chat-input input {
+        width: 80%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 200%;
+    }
+
+    .chat-input button {
+        width: 30%;
+        padding: 10px;
+        background-color: #2c3e50;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+    }
+
+    .chat-input button:hover {
+        background-color: #2c3e82;
+    }
+
+    .chat-input input:focus {
+        border-color: #1abc9c;
+    }
+</style>
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+        const sender = data.sender;
+
+        const chatBox = document.getElementById('chat-box');
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message';
+        if (sender === '{{ user.username }}') {
+            messageElement.classList.add('sent');
+        }
+        messageElement.innerHTML = `<p><strong>${sender}:</strong> ${message}</p>`;
+        chatBox.appendChild(messageElement);
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-input form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInputDom = document.querySelector('#chat-input input');
+        const message = messageInputDom.value;
+        const sender = '{{ user.username }}';
+
+        chatSocket.send(JSON.stringify({
+            'message': message,
+            'sender': sender
+        }));
+
+        messageInputDom.value = '';
+    };
+</script>
+<script>
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent the default form submission
+    
+        const formData = new FormData(this);  // Get the form data
+    
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'  // Indicate that this is an AJAX request
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+            } else {
+                // Update the chat interface with the new message
+                const chatBox = document.getElementById('chat-box');  // Assuming you have a chat box element
+                const newMessage = document.createElement('div');
+                newMessage.textContent = `${data.sender}: ${data.message}`;
+                chatBox.appendChild(newMessage);
+                document.getElementById('chat-input').value = '';  // Clear the input field
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    </script>
+{% endblock %}

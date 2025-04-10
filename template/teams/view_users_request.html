@@ -1,0 +1,14 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section id="wrapper">
+    <ul>
+    {% for request in requests %}
+            <li><a href="">{{request.user}} {{request.team}}</a></li>
+            <small>{{request.message}}</small>
+    {% endfor %}
+    </ul>
+</section>
+
+{% endblock %}

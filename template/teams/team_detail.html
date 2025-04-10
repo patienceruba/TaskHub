@@ -1,0 +1,224 @@
+{% extends 'todo/main.html' %}
+{% block content %}
+{% load team_filters %}
+<div class="side-bar">
+    
+    <ul>
+        
+        <!--li class="toggle-sidebar">
+            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+            <span class="sidebar-text">Menu</span>
+        </li>-->
+        <a href="{% url 'dashboard' %}"><li>
+            <span class="material-symbols-outlined">dashboard_customize</span>
+            <span class="sidebar-text">Dashboard</span>
+        </li></a>
+
+        {% if user.is_staff %}
+        <a href="{% url 'add' %}"><li>
+            <span class="material-symbols-outlined">add</span>
+            <span class="sidebar-text">Add Task</span>
+        </li></a>
+
+        <a href="{% url 'home' %}"><li>
+            <span class="material-symbols-outlined">view_list</span>
+            <span class="sidebar-text">View Task</span>
+        </li></a>
+        {% endif %}
+
+        <a href="{% url 'today' %}"><li>
+            <span class="material-symbols-outlined">today</span>
+            <span class="sidebar-text">Today</span>
+        </li></a>
+
+        <a href="{% url 'event' %}"><li>
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <span class="sidebar-text">Tasks</span>
+        </li></a>
+
+        <a href="{% url 'task_done' %}"><li>
+            <span class="material-symbols-outlined">task</span>
+            <span class="sidebar-text">Done</span>
+        </li></a>
+
+        <a href="{% url 'list_teams' %}" id="team"><li>
+            <span class="material-symbols-outlined">groups</span>
+            <span class="sidebar-text">Team</span></li></a>
+
+        <a href="{% url 'calendar' %}"><li>
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="sidebar-text">Calendar</span>
+        </li></a>
+
+    </ul>
+</div>
+
+<section id="team-detail" class="container">
+    
+    <h1>{{ team.name }}</h1>
+    <p>{{ team.description }}</p>
+
+    <h2>Team Members</h2>
+    <ul class="member-list">
+        
+        {% for member in team.members.all %}
+            <li class="member-item">
+                <span>{{ member.user.username }}</span>
+                {% if member.is_admin %}
+                    <strong class="admin-badge">(Admin)</strong>
+                {% endif %}
+                {% if user|is_admin:team and not member.is_admin %}
+                    <form action="{% url 'remove_member' team.id member.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No members in this team yet.</li>
+        {% endfor %}
+    </ul>
+
+    {% if user|is_admin:team %}
+        <h2>Join Requests</h2>
+        {% if join_requests %}
+            <ul class="request-list">
+                {% for request in join_requests %}
+                    <li class="request-item">
+                        <span>{{ request.user.username }} requested to join</span>
+                        <p>{{request.message}}</p>
+                        <div class="request-actions">
+                            {% if request.status == 'Pending' %}
+                                <form action="{% url 'approve_request' request.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Approve</button>
+                                </form>
+                                <form action="{% url 'reject_request' request.id %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                </form>
+                            {% else %}
+                                <span class="status status-{{ request.status|lower }}">{{ request.status }}</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No join requests at the moment.</p>
+        {% endif %}
+    {% else %}
+        <p>You need to be an admin to approve or reject requests.</p>
+    {% endif %}
+</section>
+<section class="footer">
+    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+</section>
+<style>
+    /* General Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    #team-detail {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-top: 100px;
+    }
+
+    #team-detail h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    #team-detail h2 {
+        font-size: 1.8rem;
+        margin-top: 20px;
+        color: #555;
+    }
+
+    /* Member and Request Lists */
+    .member-list,
+    .request-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .member-item,
+    .request-item {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .admin-badge {
+        color: green;
+        font-weight: bold;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .btn-success {
+        background-color: green;
+    }
+
+    .btn-danger {
+        background-color: red;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    /* Request Status */
+    .status {
+        font-style: italic;
+    }
+
+    .status-pending {
+        color: orange;
+    }
+
+    .status-approved {
+        color: green;
+    }
+
+    .status-rejected {
+        color: red;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+        .member-item,
+        .request-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .request-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+
+<section class="wrapper">
+   <div class="side-bar">
+    
+    <ul>
+        
+        <!--<div class="toggle-sidebar">
+            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+        </div>-->
+        <a href="{% url 'dashboard' %}"><li>
+            <span class="material-symbols-outlined">dashboard_customize</span>
+            <span class="sidebar-text">Dashboard</span>
+        </li></a>
+
+        {% if user.is_staff %}
+        <a href="{% url 'add' %}"><li>
+            <span class="material-symbols-outlined">add</span>
+            <span class="sidebar-text">Add Task</span>
+        </li></a>
+
+        <a href="{% url 'home' %}"><li>
+            <span class="material-symbols-outlined">view_list</span>
+            <span class="sidebar-text">View Task</span>
+        </li></a>
+        {% endif %}
+
+        <a href="{% url 'today' %}"><li>
+            <span class="material-symbols-outlined">today</span>
+            <span class="sidebar-text">Today</span>
+        </li></a>
+
+        <a href="{% url 'event' %}"><li>
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <span class="sidebar-text">Tasks</span>
+        </li></a>
+
+        <a href="{% url 'task_done' %}"><li>
+            <span class="material-symbols-outlined">task</span>
+            <span class="sidebar-text">Done</span>
+        </li></a>
+
+        <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+
+        <a href="{% url 'calendar' %}"><li>
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="sidebar-text">Calendar</span>
+        </li></a>
+
+
+
+    </ul>
+</div>
+
+    <section class="content-wrapper">
+        <section id="view-section" class="section1">
+            <div class="task-detail-container">
+                <h1>{{ record.title }}</h1>
+                <p><strong>Description:</strong> {{ record.description }}</p>
+                <p><strong>Start Date:</strong> {{ record.start_date }}</p>
+                <p><strong>End Date:</strong> {{ record.end_date }}</p>
+                <p><strong>Status:</strong> {% if record.done %}Completed{% else %}In Progress{% endif %}</p>
+
+                <h2>Subtasks</h2>
+                <ul>
+                    {% for subtask in record.subtasks.all %}
+                        <li>
+                            <h3>{{ subtask.title }}</h3>
+                            <p><strong>Description:</strong> {{ subtask.comment }}</p>
+                            <p><input type="checkbox" name="complete">mark as complete</p>
+                            <p><strong>Status:</strong> {% if subtask.done %}Completed{% else %}Not Completed <br><a href="" id="complete_task">complete task</a>{% endif %}</p>
+                        </li>
+                    {% empty %}
+                        <p>No subtasks available for this task.</p>
+                    {% endfor %}
+                </ul>
+                {% if is_owner %}
+                    <a href="{% url 'event' %}">add subtask</a>
+                {% endif %}
+                <a href="{% url 'event' %}">Back to Task List</a>
+            </div>
+
+        </section>
+        <section class="footer">
+            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+        </section>
+    </section>
+</section>
+<style type="text/css">
+    /* Base layout styles for the content */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+.content-wrapper{
+    min-width: 60%;
+}
+/* Content wrapper */
+.content-wrapper {
+    padding: 20px;
+    background-color: #f4f4f4;
+    margin-left: 20%;
+}
+
+.task-detail-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.task-detail-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.task-detail-container p {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.task-detail-container h2 {
+    font-size: 1.5rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.task-detail-container ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.task-detail-container ul li {
+    margin-bottom: 15px;
+}
+
+.task-detail-container ul li h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.task-detail-container ul li p {
+    font-size: 1rem;
+}
+
+.task-detail-container ul li a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.task-detail-container ul li a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Add styles for responsiveness */
+@media screen and (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    .side-bar {
+        width: 100%;
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+}
+
+</style>
+{% endblock %}
