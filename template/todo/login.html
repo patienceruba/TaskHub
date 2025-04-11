@@ -5,206 +5,348 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Doiz Projects</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}"> <!-- Add a CSS file if needed -->
-</head>
-<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<section class="login-reg">
-    <div class="img">
-        <h1 id="Doiz">Doiz Projects</h1>
-    </div>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            color: #333;
+        }
 
-    <div class="login">
-        <div class="ops"> 
-            <h1>LOGIN</h1>
+        .login-container {
+            display: flex;
+            width: 60%;
+            max-width: 1200px;
+            height: 80%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            margin-left: 20%;
+            margin-top: 5%;
+        }
 
-            <!-- Error Message Display -->
-            
-            {% if error_message %}
-            <div class="message">
-                <p class="error-message">{{ error_message }}</p>
-                <script>
-                    alert("{{ error_message }}");
-                </script>
-            </div>
-            {% endif %}
-            
-            <form method="POST">
-                {% csrf_token %}
-                <input type="text" name="username" placeholder="Username" id="username" required>
-                <input type="password" name="password" placeholder="Password" id="password" required>
-                <button type="submit" name="login" id="login">Login</button>
-            </form>
+        .login-image {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
 
-            <div class="remember">
-                <div class="options">
-                    <label for="remember-me">
-                        <input type="checkbox" name="remember" id="remember-me"> Remember Me
-                    </label>
-                    <a href="{% url 'password_reset_request' %}" class="forgot-password">Forgot Password?</a>
-                </div>
-                <p id="link">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
-            </div>
-        </div>
+        .login-image .image-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: translateX(100%); /* Start off-screen to the right */
+            transition: transform 1s ease-in-out;
+        }
 
-        <section class="footer">
-            <span><p>&copy; Powered By I-Mind Company. All Rights Reserved.</p></span>
-        </section>
-    </div>
-</section>
+        .login-image .image-slide.active {
+            transform: translateX(0); /* Move into view */
+        }
 
-<style>
-    /* General body styling */
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-    
-    .login-reg {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-    }
+        .login-form {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-    .img {
-        width: 50%;
-        height: 650px;
-        background-image: url("{% static 'image/task-management-dependencies.png' %}");
-        
-    }
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .login {
-        width: 50%;
-        height: 484px;
-        padding-top: 10%;
-        /*background: #2c3e50;*/
-    }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
 
-    #Doiz {
-        text-align: center;
-        font-size: 50px;
-        margin-top: 55%;
-        color: #2c3e50;
-    }
+        .input-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
 
-    .ops {
-        width: 50%;
-        margin-left: 28%;
-    }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+            transition: border 0.3s ease;
+        }
 
-    .login h1 {
-        color: #333;
-        text-align: center;
-        margin-bottom: 20px;
-    }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
 
-    .login input[type="text"],
-    .login input[type="password"],
-    .login button {
-        width: 80%;
-        padding: 10px;
-        margin: 10px 34px;
-        border: none;
-        outline: none;
-        border-bottom: 1px solid #2c3e50;
-        background-color: transparent;
-        font-size: 16px;
-    }
-    .message{
-        background: red;
-        width: 100%;
-        padding: 10px 20px;
-    }
-    .login button {
-        background-color: #2c3e50;
-        color: #fff;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        width: 87%;
-    }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            color: white;
+            background-color: #2c3e40;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    .login button:hover {
-        background-color: #0056b3;
-    }
+        button:hover {
+            background-color: #0056b3;
+        }
 
-    .options {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-    }
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #555;
+        }
 
-    .options label {
-        font-size: 14px;
-        color: #555;
-    }
+        .forgot-password {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
 
-    .forgot-password {
-        font-size: 14px;
-        color: #007bff;
-        text-decoration: none;
-    }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
 
-    .forgot-password:hover {
-        text-decoration: underline;
-    }
+        #signup-link {
+            margin-top: 20px;
+            text-align: center;
+        }
 
-    #link {
-        margin-top: 15px;
-        font-size: 14px;
-        color: #555;
-    }
+        #signup-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
 
-    #link a {
-        color: #007bff;
-        text-decoration: none;
-    }
+        #signup-link a:hover {
+            text-decoration: underline;
+        }
 
-    #link a:hover {
-        text-decoration: underline;
-    }
+        .error-message {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
 
-    .login input[type="checkbox"] {
-        margin-right: 5px;
-    }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #f1f1f1;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+        }
 
-    span p {
-        text-align: center;
-        margin-top: 100px;
-    }
+        footer p {
+            color: #777;
+            font-size: 14px;
+        }
 
-    /* Error message styling */
-    .error-message {
-        color: white;
-        text-align: center;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-</style>
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                height: auto;
+                border: none;
+            }
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const sureElement = document.getElementById("Doiz");
-        const placeholderText = "Doiz PROJECTS";
-        let i = 0;
+            .login-image {
+                height: 200px;
+                width: 100%;
+                display: block;
+            }
 
-        function typeText() {
-            if (i < placeholderText.length) {
-                sureElement.textContent = placeholderText.substring(0, i + 1);
-                i++;
-                setTimeout(typeText, 200);
+            .login-form {
+                padding: 20px;
+                border: none;
             }
         }
 
-        typeText();
+        /* Show password icon */
+        .show-password {
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<section class="login-container">
+    <div class="login-image" id="loginImage">
+        {% for image in background_images %}
+        <div class="image-slide" style="background-image: url('{{ image.image.url }}');"></div>
+        {% endfor %}
+    </div>
+
+    <div class="login-form">
+        <div class="form-container">
+            <h1>LOGIN</h1>
+
+            <!-- Error Message Display -->
+            {% if error_message %}
+            <div class="error-message">
+                <p>{{ error_message }}</p>
+            </div>
+            {% endif %}
+
+            <form method="POST" id="login-form" aria-labelledby="login-form">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="username" id="username" placeholder="Username" required aria-label="Username">
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="Password" required aria-label="Password">
+                    <span id="show-password" class="show-password">👁️</span>
+                    <span id="hide-password" class="show-password" style="display:none;">🙈</span> 
+                </div>
+                <button type="submit" name="login" id="login">Login</button>
+            </form>
+            <br>
+            
+            <div class="options">
+                <label for="remember-me">
+                    <input type="checkbox" name="remember" id="remember-me" aria-label="Remember me"> Remember Me
+                </label>
+                <br>
+            
+                <a href="{% url 'password_reset_request' %}" class="forgot-password">Forgot Password?</a>
+            </div>
+            
+            <p id="signup-link">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 I-Mind. All Rights Reserved.</p>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all the images as they are rendered dynamically
+        const imageSlides = document.querySelectorAll('.image-slide');
+
+        let currentIndex = 0;
+        let nextIndex = 1;
+
+        // Function to change the background image
+        function changeBackground() {
+            // Start the sliding animation by adding the active class to the next image
+            setTimeout(() => {
+                imageSlides[currentIndex].classList.remove('active'); // Hide the current image
+                imageSlides[nextIndex].classList.add('active'); // Show the next image
+            }, 10);
+
+            // Update indices
+            currentIndex = nextIndex;
+            nextIndex = (nextIndex + 1) % imageSlides.length;
+        }
+
+        
+        changeBackground();
+
+        
+        setInterval(changeBackground, 10000);
+
+        
+        
     });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const passwordField = document.getElementById('password');
+    const showPasswordIcon = document.getElementById('show-password');
+    const hidePasswordIcon = document.getElementById('hide-password'); // Reference to Hide Icon
+
+    showPasswordIcon.addEventListener('click', function() {
+        passwordField.type = "text";
+        showPasswordIcon.style.display = "none"; // Hide show icon
+        hidePasswordIcon.style.display = "inline"; // Show hide icon
+    });
+
+    hidePasswordIcon.addEventListener('click', function() {
+        passwordField.type = "password";
+        hidePasswordIcon.style.display = "none"; // Hide hide icon
+        showPasswordIcon.style.display = "inline"; // Show show icon
+    });
+});
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const usernameField = document.getElementById('username');
+    const passwordField = document.getElementById('password');
+    const rememberMeCheckbox = document.getElementById('remember-me');
+    const loginForm = document.getElementById('login-form');
+
+    // Check if credentials are stored in localStorage
+    if (localStorage.getItem('rememberedUsername') && localStorage.getItem('rememberedPassword')) {
+        usernameField.value = localStorage.getItem('rememberedUsername');
+        passwordField.value = localStorage.getItem('rememberedPassword');
+        rememberMeCheckbox.checked = true;
+    }
+
+    // Handle form submission to save username and password if "Remember Me" is checked
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting immediately
+
+        if (rememberMeCheckbox.checked) {
+            // Save username and password to localStorage
+            localStorage.setItem('rememberedUsername', usernameField.value);
+            localStorage.setItem('rememberedPassword', passwordField.value);
+        } else {
+            // Clear saved credentials if "Remember Me" is not checked
+            localStorage.removeItem('rememberedUsername');
+            localStorage.removeItem('rememberedPassword');
+        }
+
+        // Now submit the form (for example, using AJAX or normal submission)
+        loginForm.submit();
+    });
+});
+
 </script>
 
 </body>

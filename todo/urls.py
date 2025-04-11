@@ -17,5 +17,6 @@ urlpatterns = [
     path('reset_task_notification/', views.reset_task_notification, name='reset_task_notification'),
     path('task/<int:pk>/', views.task_detail, name='task_detail'),  # Task detail view
     path("teamMembership", views.team_member_ship, name="teamMembership"),
+    path('slider/', views.slider_view, name='slider_view'),
     
 ]

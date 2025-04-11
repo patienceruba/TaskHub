@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile,SubTask
+from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile,SubTask, Image
 from django.utils import timezone
 from datetime import datetime
 from django.contrib import messages
@@ -26,6 +26,7 @@ from teams.models import TeamMember
 @user_passes_test(lambda user: user.is_staff)
 def home(request):
     task = RecordRow.objects.filter(user=request.user)
+    
     context = {"task":task}
     return render(request, "todo/index.html", context)
 
@@ -135,15 +136,23 @@ def search(request):
 
 
 
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 def calendar(request):
-    # Get all events from the database (filter based on conditions if needed)
     events = RecordRow.objects.all()
 
-    # Pass events data (dates) to the template
-    event_dates = [event.start_date.strftime('%Y-%m-%d') for event in events]  # Convert dates to string
-    return render(request, "todo/calendar.html", {"event_dates": event_dates})
+    event_list = [
+        {
+            "date": event.start_date.strftime('%Y-%m-%d'),
+            "title": event.title  # adjust if your model uses a different field name
+        }
+        for event in events
+    ]
 
-
+    return render(request, "todo/calendar.html", {
+        "events": json.dumps(event_list, cls=DjangoJSONEncoder)
+    })
 
 def upload_pdf(request):
     if request.method == 'POST' and request.FILES['pdf']:
@@ -223,6 +232,7 @@ def dashboard_view(request):
 
 def login_view(request):
     error_message = None  # Initialize error message
+    background_images = Image.objects.all()
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -233,7 +243,8 @@ def login_view(request):
         else:
             error_message = "Invalid username or password"
 
-    return render(request, "todo/login.html", {"error_message": error_message})
+    return render(request, "todo/login.html", {"error_message": error_message, 
+                                               "background_images":background_images})
 
 
 
@@ -295,5 +306,13 @@ def task_detail(request, pk):
 def team_member_ship(request):
     teams = TeamMember.objects.filter(user = request.user)
     return render(request, "teams/teamMembership.html", {"teams":teams})
+
+
+def slider_view(request):
+    images = Image.objects.all()  # Assuming you have an Image model
+    return render(request, 'slide_template.html', {'images': images})
+
+
+
 
 

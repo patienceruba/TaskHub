@@ -6,7 +6,8 @@ from .models import Team, TeamMemberRequest, TeamMember
 from .forms import ApproveUserForm
 from django.http import JsonResponse
 from django.http import HttpResponseForbidden
-
+from datetime import timedelta
+from django.utils import timezone
 
 @login_required
 def create_team(request):
@@ -50,6 +51,7 @@ def team_detail(request, team_id):
 
 
 # List All Teams
+
 @login_required
 def list_teams(request):
     teams = Team.objects.all()
@@ -57,9 +59,40 @@ def list_teams(request):
 
     for team in teams:
         is_member = TeamMember.objects.filter(user=request.user, team=team).exists()
+        
+        # Check if the user has a pending or accepted request
+        existing_request = TeamMemberRequest.objects.filter(user=request.user, team=team).first()
+        request_status = None
+        can_request_again = False
+        days_remaining = None
+
+        if existing_request:
+            request_status = existing_request.status  # Get the request status (Pending/Accepted/Rejected)
+
+            if request_status == "Rejected" and existing_request.rejected_at:
+                # Log the rejected_at value for debugging
+                print(f"Rejected At: {existing_request.rejected_at}")
+
+                # Check if the user can request again after 7 days
+                days_since_rejection = (timezone.now() - existing_request.rejected_at).days
+
+                # Log the days since rejection for debugging
+                print(f"Days Since Rejection: {days_since_rejection}")
+
+                if days_since_rejection >= 7:
+                    can_request_again = True
+                else:
+                    days_remaining = 7 - days_since_rejection  # Days remaining until the user can request again
+
+                    # Log the days_remaining calculation
+                    print(f"Days Remaining: {days_remaining}")
+
         teams_with_status.append({
             'team': team,
             'is_member': is_member,
+            'request_status': request_status,  # Add the request status to the data
+            'can_request_again': can_request_again,
+            'days_remaining': days_remaining if days_remaining is not None else 0,  # Default to 0 if None
         })
 
     return render(request, 'teams/list_teams.html', {'teams': teams_with_status})
@@ -198,5 +231,16 @@ def remove_member(request, team_id, member_id):
     member.delete()
     return redirect("team_detail", team_id=team.id)
 
+@login_required
+def reject_request(request, request_id):
+    team_request = get_object_or_404(TeamMemberRequest, id=request_id)
 
-    
+    if request.user == team_request.team.created_by:
+        # Reject the request and set the rejection date
+        team_request.status = "Rejected"
+        team_request.rejected_at = timezone.now()  # Set the rejection date
+        team_request.save()
+
+        return JsonResponse({'success': True, 'message': 'Request rejected!', 'username': team_request.user.username, 'status': 'Rejected'})
+
+    return JsonResponse({'success': False, 'message': 'Permission denied!'})

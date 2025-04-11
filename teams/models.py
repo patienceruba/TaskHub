@@ -31,7 +31,7 @@ class TeamMemberRequest(models.Model):
         default="Pending"
     )
     requested_at = models.DateTimeField(auto_now_add=True)
-
+    rejected_at = models.DateTimeField(null=True, blank=True)
     class Meta:
         unique_together = ("user", "team")  # Prevent duplicate requests
 
