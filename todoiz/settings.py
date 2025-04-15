@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'teams',
     'chat',
     'assigntask',
+    'profile_edit',
 ]
 
 MIDDLEWARE = [

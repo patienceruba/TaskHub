@@ -1,60 +1,23 @@
-
 {% extends 'todo/main.html' %}
 {% load static %}
 {% block content %}
 {% if user.is_staff %}
 <section class="wrapper">
-   <div class="side-bar">
-    
-    <ul>
-        
-        <!--<div class="toggle-sidebar">
-            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
-        </div>-->
-        <a href="{% url 'dashboard' %}"><li>
-            <span class="material-symbols-outlined">dashboard_customize</span>
-            <span class="sidebar-text">Dashboard</span>
-        </li></a>
+    <div class="side-bar">
+        <ul>
+            <a href="{% url 'dashboard' %}"><li><span class="material-symbols-outlined">dashboard_customize</span><span class="sidebar-text">Dashboard</span></li></a>
 
-        {% if user.is_staff %}
-        <a href="{% url 'add' %}"><li>
-            <span class="material-symbols-outlined">add</span>
-            <span class="sidebar-text">Add Task</span>
-        </li></a>
+            <a href="{% url 'add' %}"><li><span class="material-symbols-outlined">add</span><span class="sidebar-text">Add Task</span></li></a>
+            <a href="{% url 'home' %}"><li><span class="material-symbols-outlined">view_list</span><span class="sidebar-text">View Task</span></li></a>
 
-        <a href="{% url 'home' %}"><li>
-            <span class="material-symbols-outlined">view_list</span>
-            <span class="sidebar-text">View Task</span>
-        </li></a>
-        {% endif %}
+            <a href="{% url 'today' %}"><li><span class="material-symbols-outlined">today</span><span class="sidebar-text">Today</span></li></a>
+            <a href="{% url 'event' %}"><li><span class="material-symbols-outlined">event_upcoming</span><span class="sidebar-text">Tasks</span></li></a>
+            <a href="{% url 'task_done' %}"><li><span class="material-symbols-outlined">task</span><span class="sidebar-text">Done</span></li></a>
 
-        <a href="{% url 'today' %}"><li>
-            <span class="material-symbols-outlined">today</span>
-            <span class="sidebar-text">Today</span>
-        </li></a>
-
-        <a href="{% url 'event' %}"><li>
-            <span class="material-symbols-outlined">event_upcoming</span>
-            <span class="sidebar-text">Tasks</span>
-        </li></a>
-
-        <a href="{% url 'task_done' %}"><li>
-            <span class="material-symbols-outlined">task</span>
-            <span class="sidebar-text">Done</span>
-        </li></a>
-
-        <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
-
-        <a href="{% url 'calendar' %}"><li>
-            <span class="material-symbols-outlined">calendar_month</span>
-            <span class="sidebar-text">Calendar</span>
-        </li></a>
-
-
-
-    </ul>
-</div>
-
+            <a href="{% url 'list_teams' %}" id="team"><li><span class="material-symbols-outlined">groups</span>Team</li></a>
+            <a href="{% url 'calendar' %}"><li><span class="material-symbols-outlined">calendar_month</span><span class="sidebar-text">Calendar</span></li></a>
+        </ul>
+    </div>
 
     <section id="view-section" class="section1">
         <div class="view-list">
@@ -66,60 +29,56 @@
                     <th>Start Date</th>
                     <th>Expected End Date</th>
                     <th>Task Progress</th>
-                    <th>assign task to the user</th>
+                    <th>Assign Task</th>
                     <th>Update</th>
                     <th>Delete</th>
                 </tr>
-                {% for tasks in task %}
+                {% for task in task %}
                 <tr>
-                    
-                       {% if tasks.progress == 100 %}
-                            <td><input type="checkbox" name="asdone" id="asdone" checked disabled></td>
-                        {% else %}
-                            <td><input type="checkbox" name="asdone" id="asdone" disabled></td>
-                        {% endif %}
-
-                        <td><a href="{% url 'task_detail' tasks.id %}">{{tasks.title}}</a></td>
-                        <td>{{tasks.start_date}}</td>
-                        <td>{{tasks.end_date}}</td>
-                        <td>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: {{ tasks.progress }}%;"></div>
-                                <span class="progress-text">{{tasks.progress}}%</span>
-                            </div>
-                        <td><a href="{% url 'assigntask'  tasks.id %}">assign task</a></td>
-                        </td>
-                        <td id="update-btn"><a href="{% url 'update'  tasks.id%}">Update</a></td>
-                        <td id="dlt-btn"><a href="{% url 'delete'  tasks.id%}">Delete</a></td>
-                    
-
+                    <td>
+                        <input type="checkbox" {% if task.progress == 100 %}checked{% endif %} disabled>
+                    </td>
+                    <td><a href="{% url 'task_detail' task.id %}">{{ task.title }}</a></td>
+                    <td>{{ task.start_date }}</td>
+                    <td>{{ task.end_date }}</td>
+                    <td>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: {{ task.progress }}%;"></div>
+                            <span class="progress-text">{{ task.progress }}%</span>
+                        </div>
+                    </td>
+                    <td><a href="{% url 'assign_task' task.id %}">Assign Task</a></td>
+                    <td id="update-btn"><a href="{% url 'update' task.id %}">Update</a></td>
+                    <td id="dlt-btn"><a href="{% url 'delete' task.id %}">Delete</a></td>
                 </tr>
                 {% endfor %}
-            </table>        
+            </table>
         </div>
+
         <section class="footer">
-            <span> <p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
         </section>
     </section>
 </section>
-<style type="text/css">
-.view-list{
+
+<style>
+.view-list {
     margin: 3% 10%;
 }
-table, tr, td,th{
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
- td,th{
-    padding: 20px 20px;
- }
-th{
-    background-color:  #2c3e50;
+table, tr, td, th {
+    border: 1px solid black;
+    border-collapse: collapse;
 }
-   span{
-        cursor: pointer;
-    }
-    /* Progress Bar Container */
+td, th {
+    padding: 20px;
+}
+th {
+    background-color: #2c3e50;
+    color: white;
+}
+span {
+    cursor: pointer;
+}
 .progress-container {
     position: relative;
     width: 100%;
@@ -129,16 +88,12 @@ th{
     overflow: hidden;
     margin: 5px 0;
 }
-
-/* Progress Bar */
 .progress-bar {
     height: 100%;
     background-color: #4caf50;
     transition: width 0.3s ease;
 }
-
-/* Percentage Text Overlay */
-.progress-container .progress-text {
+.progress-text {
     position: absolute;
     top: 0;
     left: 50%;
@@ -151,7 +106,5 @@ th{
     z-index: 2;
 }
 </style>
-
-
 {% endif %}
 {% endblock %}

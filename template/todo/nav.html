@@ -27,8 +27,10 @@
                      alt="Profile Picture" width="30" height="30" id="profile-pic">
                 
                 <div class="dropdown-menu" id="profile-dropdown">
-                    <a href="">Edit Profile</a>
-                    
+                    <h4>setings</h4>
+                    <a href="{% url 'profile' %}">Edit Profile</a>
+                    <a href="{% url 'person' %}">Person</a>
+                    <a href="{% url 'profile' %}">password</a>
                     <a href="{% url 'logout' %}">Logout</a>
                 </div>
             </li>
@@ -68,8 +70,8 @@
         display: none;
         position: absolute;
         right: 0;
-        background-color: rgb(110, 99, 99);
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: rgb(5, 42, 51);
+        box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
         border-radius: 5px;
         min-width: 150px;
         z-index: 1000;
@@ -79,12 +81,13 @@
         display: block;
         padding: 10px;
         text-decoration: none;
-        color: black;
+        color: rgb(253, 245, 245);
     }
 
     .dropdown-menu a:hover {
-        background-color: #f1f1f1;
+        background-color: #2c3e50;
     }
+    
 </style>
 
 <!-- JavaScript for Functionality -->

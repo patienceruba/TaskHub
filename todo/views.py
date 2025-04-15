@@ -139,20 +139,29 @@ def search(request):
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
-def calendar(request):
-    events = RecordRow.objects.all()
 
+
+
+def calendar(request):
+    # Get tasks assigned to the currently logged-in user
+    assigned_tasks = AssignedTask.objects.filter(user=request.user)
+
+    # Prepare event list with necessary data
     event_list = [
         {
-            "date": event.start_date.strftime('%Y-%m-%d'),
-            "title": event.title  # adjust if your model uses a different field name
+            "date": task.task.start_date.strftime('%Y-%m-%d') if task.task.start_date else None,
+            "end_date": task.task.end_date.strftime('%Y-%m-%d') if task.task.end_date else None,
+            "title": task.task.title,
         }
-        for event in events
+        for task in assigned_tasks
+        if task.task.start_date
     ]
 
     return render(request, "todo/calendar.html", {
-        "events": json.dumps(event_list, cls=DjangoJSONEncoder)
+        "events": json.dumps(event_list, cls=DjangoJSONEncoder),
+        "has_events": bool(event_list)
     })
+
 
 def upload_pdf(request):
     if request.method == 'POST' and request.FILES['pdf']:
@@ -266,7 +275,7 @@ def upload_task(request):
     if request.method == 'POST':
         # Create a new task
         task_name = request.POST.get('task_name')
-        task = Task.objects.create(name=task_name, user=request.user)
+        task = RecordRow.objects.create(name=task_name, user=request.user)
         
         # You can create an event to notify frontend if needed
         # For example, you can use a session variable or a custom flag in context
