@@ -11,7 +11,8 @@ urlpatterns = [
     path('team', include('teams.urls')),
     path('chat', include('chat.urls')),
     path("assigntask", include("assigntask.urls")),
-    path("editProfile", include("profile_edit.urls"))
+    path("editProfile", include("profile_edit.urls")),
+    path('sileProfile', include("slide_profile.urls"))
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'chat',
     'assigntask',
     'profile_edit',
+    'slide_profile',
 ]
 
 MIDDLEWARE = [

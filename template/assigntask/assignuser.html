@@ -1,13 +1,227 @@
-<!-- templates/assign_task.html -->
-<form method="post" action="">
-    {% csrf_token %}
-    <h3>Assign Task: {{ task.title }}</h3>
-    <label for="user">Select User:</label>
-    <select name="user" id="user">
-        {% for user in users %}
-        <option value="{{ user.id }}">{{ user.username }}</option>
-        {% endfor %}
-    </select>
-    <br><br>
-    <button type="submit">Assign Task</button>
-</form>
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+<section class="wrapper">
+    <div class="side-bar">
+        <ul>
+            <a href="{% url 'dashboard' %}"><li>
+                <span class="material-symbols-outlined">dashboard_customize</span>
+                <span class="sidebar-text">Dashboard</span>
+            </li></a>
+
+            {% if user.is_staff %}
+            <a href="{% url 'add' %}"><li>
+                <span class="material-symbols-outlined">add</span>
+                <span class="sidebar-text">Add Task</span>
+            </li></a>
+
+            <a href="{% url 'home' %}"><li>
+                <span class="material-symbols-outlined">view_list</span>
+                <span class="sidebar-text">View Task</span>
+            </li></a>
+            {% endif %}
+
+            <a href="{% url 'today' %}"><li>
+                <span class="material-symbols-outlined">today</span>
+                <span class="sidebar-text">Today</span>
+            </li></a>
+
+            <a href="{% url 'event' %}"><li>
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span class="sidebar-text">Tasks</span>
+            </li></a>
+
+            <a href="{% url 'task_done' %}"><li>
+                <span class="material-symbols-outlined">task</span>
+                <span class="sidebar-text">Done</span>
+            </li></a>
+
+            <a href="{% url 'list_teams' %}" id="team"><li>
+                <span class="material-symbols-outlined">groups</span>
+                <span class="sidebar-text">Team</span></li></a>
+
+            <a href="{% url 'calendar' %}"><li>
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="sidebar-text">Calendar</span>
+            </li></a>
+        </ul>
+    </div>
+
+    <section id="dashboard-wrapper">
+        <!-- Profile Editing Form -->
+        <section id="profile-edit-section" class="section1">
+            <!-- templates/assign_task.html -->
+            <form method="post" action="">
+                {% csrf_token %}
+                <h3>Task Name: {{ task.title }}</h3>
+                <label for="user">Select User:</label>
+                <select name="user" id="user">
+                    {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <button type="submit" class="btn">Assign Task</button>
+            </form>
+        </section>
+
+        <section class="footer">
+            <span><p>&copy; 2025 I-Mind. All Rights Reserved
+    </section>
+</section>
+<style>
+   
+/* Global Resets & Typography */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2c3e50;
+}
+
+/* Sidebar Styling */
+.side-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 100vh;
+    padding-top: 20px;
+    color: white;
+    margin-top: 30px;
+    
+}
+
+
+
+.side-bar ul a {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    
+    transition: background-color 0.2s ease-in-out;
+}
+
+.side-bar ul a:hover {
+    background-color: #34495e;
+}
+
+.material-symbols-outlined {
+    margin-right: 10px;
+}
+
+/* Main Content Wrapper */
+#wrapper, #dashboard-wrapper {
+    margin-left: 230px;
+    margin-right: 230px;
+    padding: 30px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background-color: #2c3e50;
+}
+
+/* User Info Card */
+.user-info-container {
+    display: flex;
+    gap: 30px;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.user-profile img {
+    border-radius: 50%;
+    border: 4px solid #3498db;
+}
+
+.user-details {
+    flex-grow: 1;
+}
+
+.user-details h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.user-details p {
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Profile Picture Form */
+.user-details form {
+    margin-top: 15px;
+}
+
+input[type="file"] {
+    margin-top: 8px;
+    display: block;
+}
+
+/* Form Section */
+#profile-edit-section {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+#profile-edit-section h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: white;
+    border-radius: 12px;
+}
+</style>
+
+
+{% endblock %}
+
+

@@ -72,8 +72,8 @@
                             <p><strong>Completed On:</strong> {{ task.completed_at|date:"F j, Y, g:i a" }}</p>
                             <p><strong>Completed By:</strong> {{ task.user}}</p>
                             <p><strong>Progress:</strong> 100% Done<span class="material-symbols-outlined">
-done_outline
-</span></p>
+                            done_outline
+                            </span></p>
                         </li>
                     {% endfor %}
                 </ul>
@@ -95,6 +95,10 @@ body{
     width: 100%;
     padding: 20px;
     background-color: white;
+}
+
+.task-done-wrapper, body{
+    background-color: #2c3e50;
 }
 
 .task-done-container {

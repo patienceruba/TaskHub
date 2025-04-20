@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile,SubTask, Image
+from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile,SubTask
+from slide_profile.models import Image
 from django.utils import timezone
 from datetime import datetime
 from django.contrib import messages

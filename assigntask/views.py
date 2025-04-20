@@ -3,10 +3,6 @@ from .models import AssignedTask
 from todo.models import RecordRow, SubTask
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-#********************************************************************************
-#new changes instead of users to view all task he/she can view only assigned task.
-#********************************************************************************
-
 
 from django.core.serializers.json import DjangoJSONEncoder
 import json
@@ -30,9 +26,6 @@ def event(request):
     })
 
 
-#********************************************************************************
-#assigning task functionalities
-#********************************************************************************
 
 def assign_task(request, task_id):
     task = get_object_or_404(RecordRow, id=task_id)
@@ -51,8 +44,6 @@ def assign_task(request, task_id):
             return redirect('task_detail', pk=task.id)
 
     return render(request, 'assigntask/assignuser.html', {'task': task, 'users': users})
-
-#********************************************************************************
 
 @login_required
 
