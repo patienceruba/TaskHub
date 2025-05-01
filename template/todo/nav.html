@@ -3,7 +3,7 @@
     <h1><a href="{% url 'dashboard' %}">DoiZ</a></h1>
     <div class="nav">
         <form method="GET" action="{% url 'search' %}">
-            {% if request.path == '/event' or request.path == '/home' %}
+            {% if request.path == '/event' or request.path == '/home' or request.path == '/list_teams'%}
                 <div class="search-container">
                     <div class="search-input-container">
                         <span class="material-symbols-outlined search-icon">search</span>

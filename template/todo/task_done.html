@@ -55,9 +55,10 @@
 
 
     <div class="task-done-wrapper">
-        <h2>Completed Tasks</h2>
+        
         <div class="task-done-container">
             {% if task_done_list %}
+                <h2>Completed Tasks</h2>
                 <ul>
                     {% for task in task_done_list %}
                         {% for img in image %}
@@ -84,7 +85,7 @@
     </div>
 </section>
 <section class="footer">
-    <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+    <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
 </section>
 <style type="text/css">
 body{
@@ -103,7 +104,7 @@ body{
 
 .task-done-container {
     padding: 20px;
-    background: #f9f9f9;
+    background-color: transparent;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
@@ -142,5 +143,6 @@ body{
 .footer p {
     margin: 0;
 }
+
 </style>
 {% endblock %}

@@ -21,7 +21,10 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from assigntask.models import AssignedTask
 from teams.models import TeamMember
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 @login_required
 @user_passes_test(lambda user: user.is_staff)
@@ -136,13 +139,6 @@ def search(request):
         return render(request, 'todo/search.html', {'results': results, 'query': query})
 
 
-
-import json
-from django.core.serializers.json import DjangoJSONEncoder
-
-
-
-
 def calendar(request):
     # Get tasks assigned to the currently logged-in user
     assigned_tasks = AssignedTask.objects.filter(user=request.user)
@@ -241,25 +237,24 @@ def dashboard_view(request):
     return render(request, 'todo/login.html')"""
 
 def login_view(request):
-    error_message = None  # Initialize error message
-    background_images = Image.objects.all()
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect("dashboard")  # Redirect to home or dashboard page
-        else:
-            error_message = "Invalid username or password"
+    try:
+        error_message = None  # Initialize error message
+        background_images = Image.objects.all()
+        if request.method == "POST":
+            username = request.POST.get("username")
+            password = request.POST.get("password")
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect("dashboard")  # Redirect to home or dashboard page
+            else:
+                error_message = "Invalid username or password"
 
-    return render(request, "todo/login.html", {"error_message": error_message, 
-                                               "background_images":background_images})
+        return render(request, "todo/login.html", {"error_message": error_message, 
+                                                "background_images":background_images})
+    except(TypeError):
+        message = "username and password"
 
-
-
-
-from .models import UserProfile
 
 @login_required
 def update_profile_picture(request):
@@ -277,18 +272,12 @@ def upload_task(request):
         # Create a new task
         task_name = request.POST.get('task_name')
         task = RecordRow.objects.create(name=task_name, user=request.user)
-        
-        # You can create an event to notify frontend if needed
-        # For example, you can use a session variable or a custom flag in context
         request.session['new_task'] = True  # Set a session flag for the new task
 
         return redirect('task_list')  # Redirect to task list or wherever you want
 
     return render(request, 'event.html')
 
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def reset_task_notification(request):
@@ -323,6 +312,52 @@ def slider_view(request):
     return render(request, 'slide_template.html', {'images': images})
 
 
+@login_required
+def create_subtask(request, record_id):
+    record = get_object_or_404(RecordRow, id=record_id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        comment = request.POST.get('comment', '')
+
+        if title:  # Basic validation
+            SubTask.objects.create(
+                record=record,
+                title=title,
+                comment=comment,
+                created=timezone.now()
+            )
+            return redirect('success')
+
+    return render(request, 'todo/add_subtask.html', {'record': record})
+
+@login_required
+def task_dashboard(request):
+    # Check if the user is a staff member
+    if request.user.is_staff:
+        # Fetch all tasks uploaded by the staff
+        tasks = RecordRow.objects.filter(user=request.user)  # Assuming "uploaded_by" is a field in the Task model
+    else:
+        tasks = None
+
+    # Get the assigned tasks for the user (both staff and non-staff can have assigned tasks)
+    assigned_tasks = AssignedTask.objects.filter(user=request.user)  # Assuming "assignee" is a field in the Task model
+
+    # Get the list of task titles that are already done (this could come from a related model or a user-specific task completion)
+    task_done_list = [task.title for task in RecordRow.objects.filter(user=request.user)]  # Example: "completed_by" as a field
+
+    # Get the current time for date checks
+    now = timezone.now()
+
+    context = {
+        'tasks': tasks,
+        'assigned_tasks': assigned_tasks,
+        'task_done_list': task_done_list,
+        'now': now
+    }
+
+    return render(request, 'todo/total_task.html', context)
 
 
-
+def success(request):
+    return render(request, "todo/success.html")

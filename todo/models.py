@@ -88,7 +88,7 @@ class SubTask(models.Model):
             self.record.save()
 
     def __str__(self):
-        return f"{self.title} (Subtask of {self.record.title})"
+        return f"{self.title}"
 
 
 

@@ -330,25 +330,53 @@
     }
 
     // Handle form submission to save username and password if "Remember Me" is checked
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting immediately
 
-        if (rememberMeCheckbox.checked) {
-            // Save username and password to localStorage
-            localStorage.setItem('rememberedUsername', usernameField.value);
-            localStorage.setItem('rememberedPassword', passwordField.value);
-        } else {
-            // Clear saved credentials if "Remember Me" is not checked
-            localStorage.removeItem('rememberedUsername');
-            localStorage.removeItem('rememberedPassword');
-        }
-
-        // Now submit the form (for example, using AJAX or normal submission)
-        loginForm.submit();
-    });
 });
 
 </script>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const usernameField = document.getElementById("username");
+        const passwordField = document.getElementById("password");
+        const rememberMeCheckbox = document.getElementById("remember-me");
+        const loginForm = document.getElementById("login-form");
+    
+        // Load saved credentials from localStorage
+        let storedCredentials = JSON.parse(localStorage.getItem("credentials") || "{}");
+    
+        // Auto-fill password when username changes
+        usernameField.addEventListener("input", function () {
+            const username = usernameField.value.trim();
+            if (storedCredentials[username]) {
+                passwordField.value = storedCredentials[username];
+                rememberMeCheckbox.checked = true;
+            } else {
+                passwordField.value = "";
+                rememberMeCheckbox.checked = false;
+            }
+        });
+    
+        // Handle form submission
+        loginForm.addEventListener("submit", function (e) {
+            // Save credentials if "Remember Me" is checked
+            if (rememberMeCheckbox.checked) {
+                const username = usernameField.value.trim();
+                const password = passwordField.value;
+                storedCredentials[username] = password;
+                localStorage.setItem("credentials", JSON.stringify(storedCredentials));
+                localStorage.setItem("lastUser", username);
+            }
+        });
+    
+        // Auto-fill last user if any
+        const lastUser = localStorage.getItem("lastUser");
+        if (lastUser && storedCredentials[lastUser]) {
+            usernameField.value = lastUser;
+            passwordField.value = storedCredentials[lastUser];
+            rememberMeCheckbox.checked = true;
+        }
+    });
+    </script>
+    
 </body>
 </html>

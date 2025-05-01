@@ -81,7 +81,7 @@
             <div class="dashboard-container">
                 <div class="dashboard-item">
                         {% if total_tasks %}
-                        <a href="{% url 'event' %}">
+                        <a href="{% url 'total_task' %}">
                             <h3>Total Tasks</h3>
                             <p>{{ total_tasks }}</p>
                         </a>
@@ -164,6 +164,16 @@
     #user-info-section{
         margin-left: 25px;
         margin-right: 25px;
+    }
+    #user-info-section, .dashboard-item{
+        background-color: transparent;
+        border: none;
+    }
+    .user-details h3, .user-details p{
+        color: black;
+    }
+    .dashboard-item h3, .dashboard-item p{
+        color: black;
     }
 </style>
 {% endblock %}

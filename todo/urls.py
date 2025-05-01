@@ -18,5 +18,7 @@ urlpatterns = [
     path('task/<int:pk>/', views.task_detail, name='task_detail'),  # Task detail view
     path("teamMembership", views.team_member_ship, name="teamMembership"),
     path('slider/', views.slider_view, name='slider_view'),
-    
+    path('record/<int:record_id>/subtask/create/', views.create_subtask, name='subtask_create'),
+    path('total_task/', views.task_dashboard, name='total_task'),
+    path("success/", views.success, name="success")
 ]

@@ -61,7 +61,7 @@
     <section class="content-wrapper">
 
         <section id="view-section" class="section1">
-            <h1>Available Task for you</h1>
+            
             <div class="content-container">
                 
                 {% if user.is_staff %}
@@ -73,9 +73,41 @@
                         <p>{{ task.end_date }}</p>
                     </div>
                     {% endfor %}
-                {% else %}
+                    {% if assigned_tasks %}
+                        <h1>Available Task for you</h1>
+                        <ul>
+                            {% for task in assigned_tasks %}
+                                <div class="content-item">
+                                    <a href="{% url 'task_detail' task.id %}"><img src="{{ task.task.image.url }}" alt="{{ task.task.title }}" align="{{ task.task.title }}"></a>
+                                    <a href="{% url 'task_detail' task.id %}">{{ task.task.title }}</a>
+                                    <p>{{ task..start_date }}</p>
+
+
+                                    {% if task.title in task_done_list %}
+                                        <div id="enroll">
+                                            <span>Already Enrolle</span>
+                                        </div>
+                                    {% else %}
+                                        {% if task.start_date and task.start_date < now %}
+                                            <div id="">
+                                                <a href=""></a><span class="enroll-disabled">Opps</span>
+                                            </div>
+                                        {% else %}
+                                            <div id="enroll">
+                                                <a href="{% url 'task_detail' task.id %}">start</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No tasks assigned to you yet.</p>
+                    {% endif %}
+                {% elif user.is_active %}
                     <!-- Check if assigned_tasks exists and has tasks -->
                     {% if assigned_tasks %}
+                        <h1>Available Task for you</h1>
                         <ul>
                             {% for task in assigned_tasks %}
                                 <div class="content-item">
@@ -109,7 +141,7 @@
             </div>
     </section>
         <section class="footer">
-            <span><p>&copy; 2024 InfinityMind Company. All Rights Reserved.</p></span>
+            <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
         </section>
     </section>
 </section>

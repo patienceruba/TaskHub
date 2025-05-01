@@ -63,6 +63,15 @@
                 <h2>Task Detail: {{ task.title }}</h2>
                 <p><strong>Description:</strong> {{ task.description }}</p>
                 <p><strong>Due Date:</strong> {{ task.end_date }}</p>
+                <ul>
+                    {% for subtask in subtasks %}
+                      <a href=""><li>{{ subtask }}</li></a>
+                      <hr color="black" width="50%" >
+                    {% empty %}
+                      <li>No subtasks assigned to this task.</li>
+                    {% endfor %}
+                    
+                  </ul>
                 {% if user.is_staff %}
                     <h4>Assigned Users</h4>
                 
@@ -73,6 +82,12 @@
                             <p>No users assigned to this task.</p>
                         {% endfor %}
                     </ul>
+                    {% if task.id %}
+                        <a href="{% url 'subtask_create' task.id %}">Add Subtask</a>
+                    {% else %}
+                        <span class="text-muted">Save task before adding subtasks</span>
+                    {% endif %}
+                    
                 {% endif %}
             </div>
         </section>
@@ -100,6 +115,40 @@
         background-color: #fff;
         margin-right: 250px;
         margin-left: 250px;
+    }
+    #subtask {
+    background-color: #00d1d1; /* a richer aqua tone */
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: inline-block;
+    }
+
+    #subtask:hover {
+        background-color: #005bbb; /* bold blue on hover */
+        color: #ffffff;
+        transform: translateY(-2px); /* slight lift effect */
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    #Container1 li {
+        margin-top: 10px;
+        list-style: none;
+        
+    }
+    #Container1 li:hover {
+        background-color: #2c3e50;
+        padding: 4px;
+        width: 45%;
+        
+    }
+    hr{
+        margin-right:70%;
     }
 </style>
 {% endblock %}

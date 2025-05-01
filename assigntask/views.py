@@ -83,11 +83,20 @@ def progress_tracking(request):
     return render(request, 'tasks/progress_tracking.html', context)
 
 
+
 def task_detail(request, pk):
     # Get the task based on the pk
     task = get_object_or_404(RecordRow, pk=pk)
-    
-    # You can also add related data, for example, the users assigned to this task
-    assigned_users = task.assignedtask_set.all()  # Assuming the relationship is via the AssignedTask model
 
-    return render(request, 'assigntask/task_detail.html', {'task': task, 'assigned_users': assigned_users})
+    # Get all subtasks related to this task
+    subtasks = SubTask.objects.filter(record=task)
+
+    # Get assigned users (via AssignedTask model)
+    assigned_users = task.assignedtask_set.all()
+    print("taskname: "+task.title)
+    print(subtasks)
+    return render(request, 'assigntask/task_detail.html', {
+        'task': task,
+        'assigned_users': assigned_users,
+        'subtasks': subtasks,
+    })
