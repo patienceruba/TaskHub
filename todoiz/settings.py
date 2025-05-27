@@ -35,9 +35,11 @@ INSTALLED_APPS = [
     'assigntask',
     'profile_edit',
     'slide_profile',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +50,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'todoiz.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 TEMPLATES = [
     {
@@ -74,10 +80,10 @@ WSGI_APPLICATION = 'todoiz.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'taskflow',  # Replace with your database name
-        'USER': 'postgres',      # Replace with your PostgreSQL username
-        'PASSWORD': 'star12',  # Replace with your PostgreSQL password
-        'HOST': 'localhost',          # Replace with your host (use IP if remote)
+        'NAME': 'taskflow',  
+        'USER': 'postgres',     
+        'PASSWORD': 'star12',  
+        'HOST': 'localhost',          
         'PORT': '5432',      }
 }
 

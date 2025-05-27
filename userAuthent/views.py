@@ -1,27 +1,25 @@
-from django.utils import timezone
-from datetime import datetime
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test,login_required
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.forms import PasswordResetForm
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.core.mail import EmailMessage
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
-from django.dispatch import receiver
+from django.core.mail import send_mail, EmailMessage
 from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from django.conf import settings
+
 from todo.models import UserProfile
+
 
 
 
@@ -35,43 +33,76 @@ def register_view(request):
         password1 = request.POST.get('password1')
         profile_picture = request.FILES.get('profile_picture')  # Handling the image upload
 
+        # Password match validation
         if password != password1:
             messages.error(request, "Passwords do not match.")
             return redirect('register')
 
+        # Username uniqueness validation
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists.")
             return redirect('register')
 
+        # Email uniqueness validation
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already in use.")
             return redirect('register')
 
+        # Create inactive user
         user = User.objects.create_user(username=username, email=email, password=password)
         user.first_name = first_name
         user.last_name = last_name
+        user.is_active = False  
         user.save()
 
         # Create UserProfile instance
         user_profile = UserProfile(user=user, profile_picture=profile_picture)
         user_profile.save()
 
-        messages.success(request, "Registration successful! You can now log in.")
+
+        # Prepare activation email
+        current_site = get_current_site(request)
+        mail_subject = 'Activate your account.'
+        message = render_to_string('todo/acc_active_email.html', {
+            'user': user,
+            'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'token': default_token_generator.make_token(user),
+        })
+
+        # Send email as HTML
+        email_message = EmailMessage(
+            mail_subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
+        email_message.content_subtype = 'html' 
+
+        try:
+            email_message.send(fail_silently=False)
+        except Exception as e:
+            messages.error(request, "There was an error sending the activation email. Please try again later.")
+            user.delete()  
+            return redirect('register')
+
+
+        messages.success(request, 'Please confirm your email address to complete the registration.')
         return redirect('login')
-    
+
     return render(request, 'todo/register.html')
+
 
 
 from django.contrib.auth import logout
 
 def logout_view(request):
     logout(request)
-    messages.success(request, "You have been logged out successfully.")
+    #messages.success(request, "You have been logged out successfully.")
     return redirect('login')
 
 
 
-# Request password reset
 
 
 # Password Reset Request
@@ -130,3 +161,35 @@ def password_reset_done(request):
 
 
 
+def send_activation_email(request, user):
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    activation_link = request.build_absolute_uri(
+        reverse('activate', kwargs={'uidb64': uid, 'token': token})
+    )
+
+    subject = 'Activate your account'
+    message = f'Hi {user.username}, please activate your account by clicking this link:\n{activation_link}'
+
+    send_mail(subject, message, 'rubayitap7@gmail.com', [user.email])
+    #return render(request, "todo/sentActivationEmail.html")
+
+
+
+
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return HttpResponse('Thank you for confirming your email. You can now login.')
+    else:
+        return HttpResponse('Activation link is invalid or expired.')

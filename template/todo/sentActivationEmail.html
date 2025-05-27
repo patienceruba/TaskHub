@@ -1,0 +1,36 @@
+<!-- templates/todo/email_confirmation_sent.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Your Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .message-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="message-box">
+        <h2>Check Your Email</h2>
+        <p>An activation link has been sent to your email address.</p>
+        <p>Please check your inbox and click the link to activate your account.</p>
+        <a href="{% url 'login' %}">back</a>
+    </div> 
+</body>
+</html>

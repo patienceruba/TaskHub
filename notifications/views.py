@@ -1,6 +1,8 @@
 from .models import Notification
 from django.shortcuts import render
 from django.http import JsonResponse
+from assigntask.models import AssignedTask
+
 
 def assign_task_to_user(user, task):
     # Create an AssignedTask record

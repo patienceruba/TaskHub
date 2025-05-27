@@ -9,12 +9,6 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test,login_required
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes
-from django.contrib.auth.tokens import default_token_generator
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
@@ -30,8 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 @user_passes_test(lambda user: user.is_staff)
 def home(request):
     task = RecordRow.objects.filter(user=request.user)
-    
-    context = {"task":task}
+    context = {"tasks":task}
     return render(request, "todo/index.html", context)
 
 @login_required
@@ -333,20 +326,14 @@ def create_subtask(request, record_id):
 
 @login_required
 def task_dashboard(request):
-    # Check if the user is a staff member
     if request.user.is_staff:
-        # Fetch all tasks uploaded by the staff
-        tasks = RecordRow.objects.filter(user=request.user)  # Assuming "uploaded_by" is a field in the Task model
+        tasks = RecordRow.objects.filter(user=request.user)  
     else:
         tasks = None
 
-    # Get the assigned tasks for the user (both staff and non-staff can have assigned tasks)
-    assigned_tasks = AssignedTask.objects.filter(user=request.user)  # Assuming "assignee" is a field in the Task model
+    assigned_tasks = AssignedTask.objects.filter(user=request.user)  
+    task_done_list = [task.title for task in RecordRow.objects.filter(user=request.user)]  
 
-    # Get the list of task titles that are already done (this could come from a related model or a user-specific task completion)
-    task_done_list = [task.title for task in RecordRow.objects.filter(user=request.user)]  # Example: "completed_by" as a field
-
-    # Get the current time for date checks
     now = timezone.now()
 
     context = {
@@ -361,3 +348,27 @@ def task_dashboard(request):
 
 def success(request):
     return render(request, "todo/success.html")
+
+
+"""@login_required
+def task_progress(request):
+    # Get tasks for the logged-in user
+    tasks = RecordRow.objects.filter(user=request.user)
+
+    # Add a 'complete' attribute to each task based on progress
+    for task in tasks:
+        task.done = task.progress == 100 # If progress >= 100, mark as complete
+    
+    # Pass tasks to the template
+    return render(request, 'todo/index.html', {'tasks': tasks})
+"""
+
+def task_user_progress_view(request, task_id):
+    tasks = get_object_or_404(RecordRow, id=task_id)
+    progress = tasks.get_user_progress(request.user)
+    view_progress = RecordRow.objects.filter(id__in=[p.record_id for p in progress])
+    view_progress+=progress
+    return render(request, 'todo/index.html', {
+        'task': tasks,
+        'progress': progress,
+    })

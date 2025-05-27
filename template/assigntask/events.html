@@ -61,7 +61,9 @@
     <section class="content-wrapper">
 
         <section id="view-section" class="section1">
-            
+            {% if assigned_tasks %}
+            <h1>Available Task for you</h1>
+            {% endif %}
             <div class="content-container">
                 
                 {% if user.is_staff %}
@@ -74,7 +76,7 @@
                     </div>
                     {% endfor %}
                     {% if assigned_tasks %}
-                        <h1>Available Task for you</h1>
+                        
                         <ul>
                             {% for task in assigned_tasks %}
                                 <div class="content-item">
@@ -94,7 +96,7 @@
                                             </div>
                                         {% else %}
                                             <div id="enroll">
-                                                <a href="{% url 'task_detail' task.id %}">start</a>
+                                                <a href="{% url 'task_detail' task.id %}">View task</a>
                                             </div>
                                         {% endif %}
                                     {% endif %}
@@ -102,12 +104,12 @@
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <p>No tasks assigned to you yet.</p>
+                        <small>No tasks assigned to you yet.</small>
                     {% endif %}
                 {% elif user.is_active %}
                     <!-- Check if assigned_tasks exists and has tasks -->
                     {% if assigned_tasks %}
-                        <h1>Available Task for you</h1>
+                        
                         <ul>
                             {% for task in assigned_tasks %}
                                 <div class="content-item">
@@ -127,7 +129,7 @@
                                             </div>
                                         {% else %}
                                             <div id="enroll">
-                                                <a href="{% url 'task_detail' task.id %}">start</a>
+                                                <a href="{% url 'task_detail' task.id  %}">View task</a>
                                             </div>
                                         {% endif %}
                                     {% endif %}
@@ -135,7 +137,7 @@
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <p>No tasks assigned to you yet.</p>
+                        <small>No tasks assigned to you yet.</small>
                     {% endif %}
                 {% endif %}
             </div>
@@ -158,9 +160,17 @@ body{
 
 .content-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns */
     gap: 20px;
     padding: 10px;
+}
+
+.content-container ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
 /* Styling for Content Items */

@@ -1,4 +1,5 @@
 {% extends 'todo/main.html' %}
+{% load static %}
 {% block content %}
 {% load team_filters %}
 <div class="side-bar">
@@ -63,6 +64,8 @@
         
         {% for member in team.members.all %}
             <li class="member-item">
+                <img src="{% if member.user.userprofile.profile_picture %}{{ member.user.userprofile.profile_picture.url }}{% else %}{% static 'image/User-Account-Person-PNG-File.png' %}{% endif %}"
+                     alt="{{ user.username }}'s profile picture" width="30" height="30" id="profile-pic">
                 <span>{{ member.user.username }}</span>
                 {% if member.is_admin %}
                     <strong class="admin-badge">(Admin)</strong>

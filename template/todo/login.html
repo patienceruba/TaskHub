@@ -79,7 +79,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
+        
         h1 {
             text-align: center;
             color: #333;
@@ -220,16 +220,29 @@
     </div>
 
     <div class="login-form">
+        <div class="message">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    <style>
+                        .message{
+                            max-width: 400px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            background-color: #31baff;
+                            border-radius: 8px;
+                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                        }
+                    </style>
+                {% endfor %}
+            {% endif %}
+        </div>
         <div class="form-container">
             <h1>LOGIN</h1>
 
-            <!-- Error Message Display -->
-            {% if error_message %}
-            <div class="error-message">
-                <p>{{ error_message }}</p>
-            </div>
-            {% endif %}
-
+            <!-- Error Message Display --> 
             <form method="POST" id="login-form" aria-labelledby="login-form">
                 {% csrf_token %}
                 <div class="input-group">
@@ -294,6 +307,13 @@
         
         
     });
+    document.addEventListener('DOMContentLoaded', function(){
+        const message=document.querySelector(".message")
+        if (message != null){
+            message.style.display = inline;
+            message.style.changeBackground = "blue"
+        }
+    })
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {

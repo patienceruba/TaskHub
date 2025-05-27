@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 
+
 class RecordRow(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False)
@@ -13,8 +14,10 @@ class RecordRow(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     updated_date = models.DateTimeField(auto_now=True)
-    progress = models.IntegerField(default=0)
+    progress = models.PositiveSmallIntegerField(default=0) 
     image = models.ImageField(upload_to='images/', null=True, blank=True)
+
+    
 
     def save(self, *args, **kwargs):
         previous_done = self.done

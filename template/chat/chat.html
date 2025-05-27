@@ -1,158 +1,122 @@
 {% extends "todo/main.html" %}
-
 {% block content %}
-<!-- Chat Section -->
+
+<div class="side-bar">
+    
+    <ul>
+        
+        <!--<div class="toggle-sidebar">
+            <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+            <span class="sidebar-text"></span>
+        </div>-->
+        <a href="{% url 'dashboard' %}"><li>
+            <span class="material-symbols-outlined">dashboard_customize</span>
+            <span class="sidebar-text">Dashboard</span>
+        </li></a>
+
+        {% if user.is_staff %}
+        <a href="{% url 'add' %}"><li>
+            <span class="material-symbols-outlined">add</span>
+            <span class="sidebar-text">Add Task</span>
+        </li></a>
+
+        <a href="{% url 'home' %}"><li>
+            <span class="material-symbols-outlined">view_list</span>
+            <span class="sidebar-text">View Task</span>
+        </li></a>
+        {% endif %}
+
+        <a href="{% url 'today' %}"><li>
+            <span class="material-symbols-outlined">today</span>
+            <span class="sidebar-text">Today</span>
+        </li></a>
+
+        <a href="{% url 'event' %}"><li>
+            <span class="material-symbols-outlined">event_upcoming</span>
+            <span class="sidebar-text">Tasks</span>
+        </li></a>
+
+        <a href="{% url 'task_done' %}"><li>
+            <span class="material-symbols-outlined">task</span>
+            <span class="sidebar-text">Done</span>
+        </li></a>
+
+        <a href="{% url 'list_teams' %}" id="team"><li>
+            <span class="material-symbols-outlined">groups</span>
+            <span class="sidebar-text">Team</span></li></a>
+
+        <a href="{% url 'calendar' %}"><li>
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span class="sidebar-text">Calendar</span>
+        </li></a>
+
+
+ 
+    </ul>
+</div>
+
+
 <section id="view-section">
     <div class="chat-wrapper">
         <div class="chat-section">
-            <!-- Chat Header -->
             <div class="chat-header">
                 <h2>Team Chat</h2>
             </div>
 
-            <!-- Chat Messages -->
             <div class="chat-box" id="chat-box">
-                {% for message in messages %}
-                <div class="message {% if message.sender == user.username %}sent{% else %}received{% endif %}">
-                    <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
-                </div>
-                {% empty %}
-                <p>No messages yet. Start the conversation!</p>
-                {% endfor %}
+                {% if messages %}
+                    {% regroup messages by timestamp.date as grouped_messages %}
+                    
+                    {% for group in grouped_messages %}
+                        <div class="chat-date" style="text-align:center; font-weight:bold; margin: 15px 0;">
+                            {{ group.grouper|date:"F j, Y" }}
+                        </div>
+
+                        {% for message in group.list %}
+                            <div class="message {% if message.sender.username == user.username %}sent{% else %}received{% endif %}">
+                                <p> {{ message.content }}</p>
+                                <small>@{{ message.sender.username }}</small>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p>No messages yet. Start the conversation!</p>
+                {% endif %}
             </div>
 
-            <!-- Chat Input -->
             <div class="chat-input">
-                <form id="chat-form" action="{% url 'send_message' item.team.id %}" method="POST">
+                <form id="chat-form">
                     {% csrf_token %}
-                    <input type="text" id="chat-input" name="message" placeholder="Type a message..." required>
-                    <button type="submit" id="send-btn">Send</button>
+                    <input type="text" id="chat-input" name="message" placeholder="Type a message..." required autocomplete="off">
+                    <button type="submit" id="send-btn"><span class="material-symbols-outlined">
+                        send
+                        </span></button>
                 </form>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Footer -->
 <section class="footer">
     <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
 </section>
 
-<!-- Inline Styles -->
 <style>
-    #view-section {
-        width: 80%;
-        margin: 5% 10%;
-    }
-
-    .chat-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 500px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .chat-section {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        padding: 20px;
-    }
-
-    .chat-header {
-        background-color: #2c3e50;
-        padding: 10px 15px;
-        border-radius: 8px 8px 0 0;
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-        text-align: center;
-    }
-
-    .chat-box {
-        flex-grow: 1;
-        overflow-y: auto;
-        margin-top: 20px;
-        padding: 0 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .message {
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 10px;
-        max-width: 70%;
-    }
-
-    .sent {
-        background-color: #e3f2fd;
-        align-self: flex-end;  /* Sent messages on the right */
-        text-align: right;
-    }
-
-    .received {
-        background-color: #e0f7fa;
-        align-self: flex-start; /* Received messages on the left */
-    }
-
-    .message p {
-        margin: 0;
-    }
-
-    .chat-input {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        border-top: 1px solid #ddd;
-        padding-top: 10px;
-    }
-
-    .chat-input input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-
-    .chat-input button {
-        width: 100px;
-        padding: 10px;
-        background-color: #2c3e50;
-        border: none;
-        border-radius: 5px;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        margin-top: 10px;
-    }
-
-    .chat-input button:hover {
-        background-color: #2c3e82;
-    }
-
-    .chat-input input:focus {
-        border-color: #1abc9c;
-    }
+/* ... your CSS here ... */
 </style>
 
-<!-- Script for WebSocket & Form Handling -->
 <script>
-    // WebSocket for real-time message updates
-    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+    const teamId = "{{ team.id }}";
+    console.log(teamId);
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + teamId + '/'
+    );
 
-    // Handle incoming messages
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         const message = data.message;
         const sender = data.sender;
 
-        // Append new message to the chat box
         const chatBox = document.getElementById('chat-box');
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
@@ -163,32 +127,145 @@
         }
         messageElement.innerHTML = `<p><strong>${sender}:</strong> ${message}</p>`;
         chatBox.appendChild(messageElement);
-
-        // Auto-scroll to the bottom
         chatBox.scrollTop = chatBox.scrollHeight;
     };
 
-    // Handle unexpected WebSocket closure
     chatSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
 
-    // Handle form submission via AJAX
     document.querySelector('#chat-form').onsubmit = function(e) {
-        e.preventDefault();  // Prevent default form submission
+        e.preventDefault();
 
         const messageInputDom = document.querySelector('#chat-input');
-        const message = messageInputDom.value;
-        const sender = '{{ user.username }}';
+        const message = messageInputDom.value.trim();
+        if (message.length === 0) return;
 
-        // Send message to WebSocket
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'sender': sender
-        }));
+        chatSocket.send(JSON.stringify({ 'message': message }));
 
-        // Clear the input field after sending
         messageInputDom.value = '';
     };
+
+    window.onload = function() {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
 </script>
+<style>
+    body {
+    background-color: #2c3e50;
+}
+
+#view-section {
+    width: 80%;
+    margin: 5% auto;
+    background-color: #2c3e50;
+}
+
+.chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 70%;
+    margin-left: 17%;
+}
+
+.chat-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+}
+
+.chat-header {
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.chat-box {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 20px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+}
+
+.sent {
+    background-color: #e3f2fd;
+    align-self: flex-end;
+    text-align: right;
+}
+
+.received {
+    background-color: #e0f7fa;
+    align-self: flex-start;
+}
+
+.message p {
+    margin: 0;
+}
+
+.chat-input {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 1rem;
+    padding: 10px 20px;
+    border-top: 1px solid #ccc;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.chat-input input:focus {
+    border-color: #1abc9c;
+    outline: none;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: #2c3e50;
+    background-color: #cbdfdb;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chat-input button:hover {
+    background-color: #2c3e82;
+    color: #fff;
+}
+
+.footer {
+    text-align: center;
+    color: white;
+    margin-top: 20px;
+}
+
+</style>
+
 {% endblock %}

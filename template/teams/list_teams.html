@@ -4,66 +4,59 @@
 
 <section class="wrapper">
     <div class="side-bar">
+    
         <ul>
-            <a href="{% url 'dashboard' %}">
-                <li>
-                    <span class="material-symbols-outlined">dashboard_customize</span>
-                    <span class="sidebar-text">Dashboard</span>
-                </li>
-            </a>
-
+            
+            <!--<div class="toggle-sidebar">
+                <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+                <span class="sidebar-text"></span>
+            </div>-->
+            <a href="{% url 'dashboard' %}"><li>
+                <span class="material-symbols-outlined">dashboard_customize</span>
+                <span class="sidebar-text">Dashboard</span>
+            </li></a>
+    
             {% if user.is_staff %}
-            <a href="{% url 'add' %}">
-                <li>
-                    <span class="material-symbols-outlined">add</span>
-                    <span class="sidebar-text">Add Task</span>
-                </li>
-            </a>
-
-            <a href="{% url 'home' %}">
-                <li>
-                    <span class="material-symbols-outlined">view_list</span>
-                    <span class="sidebar-text">View Task</span>
-                </li>
-            </a>
+            <a href="{% url 'add' %}"><li>
+                <span class="material-symbols-outlined">add</span>
+                <span class="sidebar-text">Add Task</span>
+            </li></a>
+    
+            <a href="{% url 'home' %}"><li>
+                <span class="material-symbols-outlined">view_list</span>
+                <span class="sidebar-text">View Task</span>
+            </li></a>
             {% endif %}
-
-            <a href="{% url 'today' %}">
-                <li>
-                    <span class="material-symbols-outlined">today</span>
-                    <span class="sidebar-text">Today</span>
-                </li>
-            </a>
-
-            <a href="{% url 'event' %}">
-                <li>
-                    <span class="material-symbols-outlined">event_upcoming</span>
-                    <span class="sidebar-text">Tasks</span>
-                </li>
-            </a>
-
-            <a href="{% url 'task_done' %}">
-                <li>
-                    <span class="material-symbols-outlined">task</span>
-                    <span class="sidebar-text">Done</span>
-                </li>
-            </a>
-
-            <a href="{% url 'list_teams' %}" id="team">
-                <li>
-                    <span class="material-symbols-outlined">groups</span>
-                    <span class="sidebar-text">Team</span>
-                </li>
-            </a>
-
-            <a href="{% url 'calendar' %}">
-                <li>
-                    <span class="material-symbols-outlined">calendar_month</span>
-                    <span class="sidebar-text">Calendar</span>
-                </li>
-            </a>
+    
+            <a href="{% url 'today' %}"><li>
+                <span class="material-symbols-outlined">today</span>
+                <span class="sidebar-text">Today</span>
+            </li></a>
+    
+            <a href="{% url 'event' %}"><li>
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span class="sidebar-text">Tasks</span>
+            </li></a>
+    
+            <a href="{% url 'task_done' %}"><li>
+                <span class="material-symbols-outlined">task</span>
+                <span class="sidebar-text">Done</span>
+            </li></a>
+    
+            <a href="{% url 'list_teams' %}" id="team"><li>
+                <span class="material-symbols-outlined">groups</span>
+                <span class="sidebar-text">Team</span></li></a>
+    
+            <a href="{% url 'calendar' %}"><li>
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="sidebar-text">Calendar</span>
+            </li></a>
+    
+    
+     
         </ul>
     </div>
+    
 
     <section class="content-wrapper">
         <section>
@@ -81,25 +74,30 @@
                 {% for item in teams %}
                 <li>
                     <div id="team-card">
-                        <h3>{{ item.team.name }}</h3>
-                        
+                        <div id="title">
+                            <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">
+                                <span class="material-symbols-outlined">more_vert</span>
+                            </a>
+                            <h3>{{ item.team.name }}</h3>
+                        </div>
                         {% if item.team.image %}
-                            <img src="{{ item.team.image.url }}" alt="{{ item.team.name }}" id="img" width="250" height="150">
+                            <img src="{{ item.team.image.url }}" alt="{{ item.team.name }}" id="img">
                         {% else %}
                             <p>No image available for this team.</p>
                         {% endif %}
                         <br>
                         {% if item.is_member %}
-                            <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">View Details</a>
-                            <a href="{% url 'chatapp' item.team.id %}">Start Chatting</a>
-                            <hr color="white">
+                            <a href="{% url 'chatapp' item.team.id %}">
+                                <span class="material-symbols-outlined">chat</span>
+                            </a>
                             {% if user.is_staff %}
-                                <a href="{% url 'delete_team' item.team.id %}" id="delete">Delete</a>
+                                <a href="{% url 'delete_team' item.team.id %}" id="delete">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </a>
                             {% endif %}
                         {% else %}
                             {% if item.request_status == 'Pending' %}
                                 <button disabled class="btn-disabled">Request Sent</button>
-                            
                             {% elif item.request_status == 'Rejected' %}
                                 {% if item.can_request_again %}
                                     <a href="{% url 'join_team_request' item.team.id %}" class="btn-request">Request Again</a>
@@ -108,15 +106,13 @@
                                         You have been rejected.<br>Try again in {{ item.days_remaining }} day{{ item.days_remaining|pluralize }}.
                                     </button>
                                 {% endif %}
-                            
                             {% else %}
                                 <a href="{% url 'join_team_request' item.team.id %}" class="btn-request">Request to Join</a>
                             {% endif %}
                         {% endif %}
                     </div>
                 </li>
-            {% endfor %}
-            
+                {% endfor %}
             </ul>
         </div>
     </section>
@@ -127,15 +123,16 @@
 </section>
 
 <style>
+    body {
+        background-color: #2c3e50;
+    }
+
     .content-wrapper {
         margin-top: 2%;
         margin-left: 20px;
         width: 97%;
         background-color: #2c3e50;
-}body{
-    background-color: #2c3e50;
-}
- 
+    }
 
     .content-container ul {
         list-style: none;
@@ -156,7 +153,6 @@
         flex-direction: column;
         align-items: center;
         transition: transform 0.2s, box-shadow 0.2s;
-        min-height: 200px;
     }
 
     .content-container li:hover {
@@ -180,7 +176,6 @@
     }
 
     #view-details-btn {
-        background-color: greenyellow;
         padding: 5px 20px;
         border-radius: 10px;
         margin-left: 6%;
@@ -217,6 +212,36 @@
     #team-card {
         padding: 15px;
         text-align: center;
+    }
+
+    #title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    margin-bottom: 10px;
+    }
+
+    #title a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #title h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #2c3e50;
+    }
+
+
+    #img {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        object-fit: cover;
     }
 
     @media (max-width: 768px) {
