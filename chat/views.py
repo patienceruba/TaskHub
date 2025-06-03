@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from .models import Message
 from teams.models import Team
 
+
 @login_required
 def chat_room(request, team_id):
     team = get_object_or_404(Team, id=team_id)

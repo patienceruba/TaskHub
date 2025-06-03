@@ -6,10 +6,11 @@ from django.utils import timezone
 from teams.models import Team
 from .models import Message
 
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.team_id = self.scope['url_route']['kwargs']['team_id']
-        self.room_group_name = f'chat_{self.team_id}'
+        self.room_group_name = f'team_chat_{self.team_id}'
 
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
@@ -21,8 +22,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         message = data.get('message', '').strip()
         user = self.scope.get('user')
-
-        print("Received message:", message, "from user:", user)
 
         if not message or not user or isinstance(user, AnonymousUser):
             await self.close()

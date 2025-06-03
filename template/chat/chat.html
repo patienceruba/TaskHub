@@ -60,7 +60,7 @@
     <div class="chat-wrapper">
         <div class="chat-section">
             <div class="chat-header">
-                <h2>Team Chat</h2>
+                <h2>{{ team.name }} Chat</h2>
             </div>
 
             <div class="chat-box" id="chat-box">
@@ -88,9 +88,7 @@
                 <form id="chat-form">
                     {% csrf_token %}
                     <input type="text" id="chat-input" name="message" placeholder="Type a message..." required autocomplete="off">
-                    <button type="submit" id="send-btn"><span class="material-symbols-outlined">
-                        send
-                        </span></button>
+                    <button type="submit" id="send-btn"><span class="material-symbols-outlined">send</span></button>
                 </form>
             </div>
         </div>
@@ -223,6 +221,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: 300px;
 }
 
 .message {
