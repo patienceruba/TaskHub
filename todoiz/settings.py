@@ -72,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'todoiz.wsgi.application'
+ASGI_APPLICATION = 'todoiz.asgi.application'
 
 
 # Database
@@ -165,4 +166,4 @@ LOGGING = {
         },
     },
 }
-ASGI_APPLICATION = 'your_project_name.asgi.application'
+

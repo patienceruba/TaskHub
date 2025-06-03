@@ -1,188 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #2c3e50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-    <!-- Internal CSS -->
-    <style>
-        /* General body styling */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    .login-reg {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      
+    }
 
-        /* Login-registration section */
-        .login-reg {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
+    .register {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
 
-        /* Register form container */
-        .register {
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(134, 45, 12, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 350px;
-        }
+    .register h1 {
+      font-size: 28px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
 
-        /* Heading styling */
-        .register h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-        }
+    .register input[type="text"],
+    .register input[type="email"],
+    .register input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-bottom: 2px solid #bdc3c7;
+      background: transparent;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
 
-        /* Form input fields */
-        .register input[type="text"],
-        .register input[type="email"],
-        .register input[type="password"],
-        .register input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            margin: 6px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            background-color: transparent;
-        }
+    .register input[type="text"]:focus,
+    .register input[type="email"]:focus,
+    .register input[type="password"]:focus {
+      border-bottom: 2px solid #3498db;
+      outline: none;
+    }
 
-        /* Submit button */
-        .register input[type="submit"] {
-            background-color:  #2c3e50;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .register input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-        .register input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
+    .register input[type="submit"]:hover {
+      background-color: #2980b9;
+    }
 
-        /* Terms and conditions checkbox */
-        .register input[type="checkbox"] {
-            margin: 10px 0;
-        }
+    .register input[type="checkbox"] {
+      margin-top: 15px;
+    }
 
-        /* Link styling */
-        .register p {
-            font-size: 14px;
-            color: #555;
-            margin-top: 15px;
-        }
+    .register p {
+      font-size: 14px;
+      color: #555;
+      margin-top: 20px;
+    }
 
-        .register p a {
-            color: #007bff;
-            text-decoration: none;
-        }
+    .register p a {
+      color: #3498db;
+      text-decoration: none;
+    }
 
-        .register p a:hover {
-            text-decoration: underline;
-        }
+    .register p a:hover {
+      text-decoration: underline;
+    }
 
-        /* Custom input border styles */
-        #f-name, #l-name, #username, #email, #password, #password1 {
-            border: none;
-            outline: none;
-            border-bottom: 1px solid #2c3e50;
-            transition: border-color 0.3s ease;
-        }
+    .message {
+      margin-bottom: 15px;
+    }
 
-        #f-name:focus, #l-name:focus, #username:focus, #email:focus, #password:focus, #password1:focus {
-            border-bottom: 2px solid #3498db;
-        }
-    </style>
+    .alert {
+      background-color: #31baff;
+      color: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
+  <section class="login-reg">
+    <div class="register">
+      <h1>Register</h1>
 
-    <section class="login-reg">
+      <div class="message">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
 
-        <div class="register">
-            <h1>Register</h1>
-            <div class="message">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert {{ message.tags }}">
-                            {{ message }}
-                        </div>
-                        <style>
-                            .message{
-                                max-width: 400px;
-                                margin: 0 auto;
-                                padding: 20px;
-                                background-color: #31baff;
-                                border-radius: 8px;
-                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                            }
-                        </style>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <form method="POST" enctype="multipart/form-data" id="register-form">
-                {% csrf_token %}
-                <input type="text" name="f-name" placeholder="First name" id="f-name" required>
-                <input type="text" name="l-name" placeholder="Last name" id="l-name" required>
-                <input type="text" name="username" placeholder="Username" id="username" required>
-                <input type="email" name="email" placeholder="Email" id="email" required>
-                <input type="password" name="password" placeholder="Password" id="password" required>
-                <input type="password" name="password1" placeholder="Re-enter password" id="password1" required>
-                <input type="submit" name="register" value="Register" id="register">
-                <input type="checkbox" name="terms" required> Agree to the terms and conditions
-            </form>
-            <p>Already have an account? <a href="{% url 'login' %}">Click here</a></p>
-        </div>
-    </section>
+      <form method="POST" enctype="multipart/form-data" id="register-form">
+        {% csrf_token %}
+        <input type="text" name="f-name" placeholder="First name" id="f-name" required />
+        <input type="text" name="l-name" placeholder="Last name" id="l-name" required />
+        <input type="text" name="username" placeholder="Username" id="username" required />
+        <input type="email" name="email" placeholder="Email" id="email" required />
+        <input type="password" name="password" placeholder="Password" id="password" required />
+        <input type="password" name="password1" placeholder="Re-enter password" id="password1" required />
+        <input type="checkbox" name="terms" required /> Agree to the terms and conditions
+        <input type="submit" name="register" value="Register" id="register" />
+      </form>
 
-    <!-- Internal JavaScript -->
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const passwordInput = document.querySelector('#password');
-            const password1Input = document.querySelector('#password1');
-            
-            form.addEventListener('submit', function(event) {
-                const password = passwordInput.value;
-                const password1 = password1Input.value;
+      <p>Already have an account? <a href="{% url 'login' %}">Click here</a></p>
+    </div>
+  </section>
 
-                // Regular expression to check for at least one number, one special character, and minimum length of 6
-                const passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('register-form');
+      const password = document.getElementById('password');
+      const password1 = document.getElementById('password1');
 
-                // Check if passwords are empty
-                if (!password || !password1) {
-                    alert('Please fill in both password fields.');
-                    event.preventDefault();
-                    return;
-                }
+      form.addEventListener('submit', function (event) {
+        const pw = password.value;
+        const pw1 = password1.value;
+        const pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
 
-                // Check if passwords match
-                if (password !== password1) {
-                    alert('Passwords do not match');
-                    event.preventDefault();
-                    return;
-                }
+        if (!pw || !pw1) {
+          alert('Please fill in both password fields.');
+          event.preventDefault();
+          return;
+        }
 
-                // Check if the password meets the pattern criteria (at least one number, one special character, and length >= 6)
-                if (!passwordPattern.test(password)) {
-                    alert('Password must be at least 6 characters long, including at least one number and one special character.');
-                    event.preventDefault();
-                    return;
-                }
-            });
-        });
-    </script>
+        if (pw !== pw1) {
+          alert('Passwords do not match.');
+          event.preventDefault();
+          return;
+        }
 
+        if (!pattern.test(pw)) {
+          alert('Password must be at least 6 characters long, including at least one number and one special character.');
+          event.preventDefault();
+          return;
+        }
+      });
+    });
+  </script>
 </body>
 </html>

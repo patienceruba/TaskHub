@@ -57,9 +57,11 @@
                 <label for="user">Select User:</label>
                 <select name="user" id="user">
                     {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.username }}</option>
+                      <option value="{{ user.id }}">{{ user.username }}</option>
                     {% endfor %}
                 </select>
+                  
+                  
                 <br><br>
                 <button type="submit" class="btn">Assign Task</button>
             </form>
@@ -70,8 +72,14 @@
     </section>
 </section>
 <style>
+select{
+    border: none;
+    outline: none;
+    background-color: white;
+}
    
 /* Global Resets & Typography */
+
 body {
     font-family: 'Segoe UI', sans-serif;
     margin: 0;

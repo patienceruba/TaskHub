@@ -93,142 +93,145 @@
     <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
 </section>
 
-<style type="text/css">
-    
-    .content-wrapper{
-        margin-top: 2%;
-        margin-left: 20px;
-    }
-    /* Today's Events Section */
-    .content-wrapper{
-        width: 100%;
+    <style type="text/css">
+        body{
+            background-color: #2c3e50;
+        }
         
-    }
-#view-section {
-    padding: 20px;
-    background-color: #f9f9f9;
-}
+        .content-wrapper{
+            margin-top: 2%;
+            margin-left: 20px;
+        }
+        /* Today's Events Section */
+        .content-wrapper{
+            width: 100%;
+            
+        }
+        #view-section {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
 
-.view-section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-    color: #2c3e50;
-}
+        .view-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
 
-.content-container ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 5 columns */
-    gap: 20px;
-}
+        .content-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 5 columns */
+            gap: 20px;
+        }
 
-.content-container li {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.2s, box-shadow 0.2s;
-    min-height: 200px;
-    max-height: 200px;
-}
+        .content-container li {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 200px;
+            max-height: 200px;
+        }
 
-.content-container li:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
+        .content-container li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
 
-.content-item img {
-    width: 100%;
-    height: auto;
-    max-height: 150px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    object-fit: cover;
-}
+        .content-item img {
+            width: 100%;
+            height: auto;
+            max-height: 150px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
 
-.content-item a {
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
-}
+        .content-item a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
 
-.content-item a:hover {
-    color: #0056b3;
-}
+        .content-item a:hover {
+            color: #0056b3;
+        }
 
-.content-item p {
-    font-size: 0.9rem;
-    color: #555;
-    margin: 5px 0;
-    text-align: center;
-}
-.devs a{
-    background-color: blue;
-    color: white;
-    padding: 10px 20px;
-    border-radius:  20px 0 20px 0;
-}
-.join{
-    margin-top: 40px;
+        .content-item p {
+            font-size: 0.9rem;
+            color: #555;
+            margin: 5px 0;
+            text-align: center;
+        }
+        .devs a{
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border-radius:  20px 0 20px 0;
+        }
+        .join{
+            margin-top: 40px;
 
-}
-#view-details-btn{
-    border: none;
-    back
-    ground: blue;
-    padding: 10px 20px;
-    color: white;
-    border-radius: 10px;
-    transition: 0.5s;
-    background-color: blue;
-}
-#view-details-btn:hover{
-    background-color: skyblue;
-}
-#img{
-    margin-bottom: 10px;
-}
+        }
+        #view-details-btn{
+            border: none;
+            back
+            ground: blue;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 10px;
+            transition: 0.5s;
+            background-color: blue;
+        }
+        #view-details-btn:hover{
+            background-color: skyblue;
+        }
+        #img{
+            margin-bottom: 10px;
+        }
 
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
-    .content-container ul {
-        grid-template-columns: repeat(4, 1fr); /* 4 columns for medium screens */
-    }
-}
+        /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            .content-container ul {
+                grid-template-columns: repeat(4, 1fr); /* 4 columns for medium screens */
+            }
+        }
 
-@media (max-width: 768px) {
-    .content-container ul {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
-    }
-}
+        @media (max-width: 768px) {
+            .content-container ul {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+            }
+        }
 
-@media (max-width: 480px) {
-    .content-container ul {
-        grid-template-columns: 1fr; /* Single column for very small screens */
-    }
-}
+        @media (max-width: 480px) {
+            .content-container ul {
+                grid-template-columns: 1fr; /* Single column for very small screens */
+            }
+        }
 
-</style>
-<style type="text/css">
-    #delete{
-        margin-top: 40px;
-    }
-    #create-team{
-        padding: 10px 10px;
-        margin-bottom: 20px;
-        background-color: #2c3e50;
-        color: #fff;
-        border-radius: 10px;
-        margin-top: 5%;
-    }
- 
-</style>
+    </style>
+    <style type="text/css">
+        #delete{
+            margin-top: 40px;
+        }
+        #create-team{
+            padding: 10px 10px;
+            margin-bottom: 20px;
+            background-color: #2c3e50;
+            color: #fff;
+            border-radius: 10px;
+            margin-top: 5%;
+        }
+    
+    </style>
 {% endblock %}

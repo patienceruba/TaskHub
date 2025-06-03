@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Doiz Projects</title>
+    <title>DoiZ</title>
     <style>
         * {
             margin: 0;
@@ -46,6 +46,7 @@
             font-weight: bold;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            background-image: url("static/image/background1.jpg");
         }
 
         .login-image .image-slide {
@@ -55,12 +56,14 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            transform: translateX(100%); /* Start off-screen to the right */
+             /* Start off-screen to the right */
+            transform: translateX(100%);
             transition: transform 1s ease-in-out;
         }
 
         .login-image .image-slide.active {
-            transform: translateX(0); /* Move into view */
+            /* Move into view */
+            transform: translateX(0); 
         }
 
         .login-form {
@@ -215,7 +218,7 @@
     <!--display images on login form-->
     <div class="login-image" id="loginImage">
         {% for image in background_images %}
-        <div class="image-slide" style="background-image: url('{{ image.image.url }}');"></div>
+            <div class="image-slide" style="background-image: url('{{ image.image.url }}');"></div>
         {% endfor %}
     </div>
 
@@ -253,20 +256,22 @@
                     <span id="show-password" class="show-password">👁️</span>
                     <span id="hide-password" class="show-password" style="display:none;">🙈</span> 
                 </div>
+                <label for="remember-me">
+                    <input type="checkbox" name="remember" id="remember-me" aria-label="Remember me"> Remember Me
+                </label>
+                <br/>
+                <a href="{% url 'password_reset_request' %}" class="forgot-password">Forgot Password?</a>
+                <br>
                 <button type="submit" name="login" id="login">Login</button>
             </form>
             <br>
             
             <div class="options">
-                <label for="remember-me">
-                    <input type="checkbox" name="remember" id="remember-me" aria-label="Remember me"> Remember Me
-                </label>
-                <br>
-            
-                <a href="{% url 'password_reset_request' %}" class="forgot-password">Forgot Password?</a>
+                
+                
             </div>
             
-            <p id="signup-link">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></p>
+            <small id="signup-link">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></small>
         </div>
     </div>
 </section>

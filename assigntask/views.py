@@ -1,11 +1,16 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from .models import AssignedTask
-from todo.models import RecordRow, SubTask
+from todo.models import Task, SubTask
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from django.http import HttpResponseForbidden
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from django.conf import settings
 
 @login_required
 def event(request):
@@ -14,7 +19,7 @@ def event(request):
     events = [
         {
             'title': task.task.title,
-            'date': task.task.start_date.isoformat(),  # or other relevant start field
+            'date': task.task.start_date.isoformat(),  # 
             'end_date': task.task.end_date.isoformat() if task.task.end_date else None,
         }
         for task in assigned_tasks
@@ -25,30 +30,61 @@ def event(request):
         'events': json.dumps(events, cls=DjangoJSONEncoder),
     })
 
+"""def assign_task(request, task_id,pk):
+    task = get_object_or_404(Task, id=task_id)
+    assigned_task = AssignedTask.objects.get(pk=pk)
+    team = task.team  
+    
+    # Get User objects, not TeamMember objects
+    users = User.objects.filter(teammember__team=team)
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        user = get_object_or_404(User, id=user_id)
+
+        if user not in users:
+            return HttpResponseForbidden("You can only assign tasks to team members.")
+
+        if not AssignedTask.objects.filter(user=user, task=task).exists():
+            AssignedTask.objects.create(user=user, task=task)
+        
+        return redirect('task_detail', pk=task.id)
+
+    return render(request, 'assigntask/assignuser.html', {'task': task, 'users': users, "assign_task":assign_task})"""
 
 
 def assign_task(request, task_id):
-    task = get_object_or_404(RecordRow, id=task_id)
-    users = User.objects.all()
+    task = get_object_or_404(Task, id=task_id)
+    team = task.team
+
+    # Get users who are members of the task's team
+    team_users = User.objects.filter(teammember__team=team)
 
     if request.method == 'POST':
-        user_id = request.POST.get('user')  # Single-user assignment
+        user_id = request.POST.get('user')
         user = get_object_or_404(User, id=user_id)
 
-        # Check if the user is already assigned to the task
-        if not AssignedTask.objects.filter(user=user, task=task).exists():
-            AssignedTask.objects.create(user=user, task=task)
-            return redirect('task_detail', pk=task.id)
-        else:
-            # Handle case if user is already assigned
-            return redirect('task_detail', pk=task.id)
+        if user not in team_users:
+            return HttpResponseForbidden("You can only assign tasks to team members.")
 
-    return render(request, 'assigntask/assignuser.html', {'task': task, 'users': users})
+        # Prevent duplicate assignment
+        AssignedTask.objects.get_or_create(user=user, task=task)
+
+        return redirect('task_detail', pk=task.id)
+
+    context = {
+        'task': task,
+        'users': team_users,
+    }
+
+    return render(request, 'assigntask/assignuser.html', context)
+
+
+
 
 @login_required
 
 def progress_tracking(request):
-    # Fetch only the tasks assigned to the current user
     assigned_tasks = AssignedTask.objects.filter(user=request.user).select_related('task')
 
     task_progress = []
@@ -85,13 +121,8 @@ def progress_tracking(request):
 
 
 def task_detail(request, pk):
-    # Get the task based on the pk
-    task = get_object_or_404(RecordRow, pk=pk)
-
-    # Get all subtasks related to this task
+    task = get_object_or_404(Task, pk=pk)
     subtasks = SubTask.objects.filter(record=task)
-
-    # Get assigned users (via AssignedTask model)
     assigned_users = task.assignedtask_set.all()
     print("taskname: "+task.title)
     print(subtasks)
@@ -100,3 +131,39 @@ def task_detail(request, pk):
         'assigned_users': assigned_users,
         'subtasks': subtasks,
     })
+
+
+def view_assigned_subtask(request, pk):
+    subtask = get_object_or_404(SubTask, pk=pk)
+    return render(request, "assigntask/assigned_events.html", {"subtask": subtask})
+
+
+  # Assuming you have a Task model
+
+def assign_task_and_notify(request, task_id, user_id):
+    task = get_object_or_404(Task, id=task_id)
+    user = get_object_or_404(User, id=user_id)
+
+    # Assign the task (your logic here)
+    task.assigned_to = user
+    task.save()
+
+    # Email subject and sender
+    subject = f"New Task Assigned - {task.title}"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    to_email = [user.email]
+
+    # Render the HTML content
+    html_content = render_to_string('emails/task_assignment.html', {
+        'user': user,
+        'task': task,
+        'assigned_by': request.user,  # Or whoever is assigning the task
+        'task_link': f"https://yourdomain.com/tasks/{task.id}/"
+    })
+
+    # Send email
+    email = EmailMultiAlternatives(subject, '', from_email, to_email)
+    email.attach_alternative(html_content, "text/html")
+    email.send()
+
+    return redirect('task_detail', task_id=task.id)

@@ -65,11 +65,14 @@
                 <p><strong>Due Date:</strong> {{ task.end_date }}</p>
                 <ul>
                     {% for subtask in subtasks %}
-                      <a href=""><li>{{ subtask }}</li></a>
-                      <hr color="black" width="50%" >
+                        <a href="{% url 'view_assigned_subtask' pk=subtask.id %}">
+                        <li>{{ subtask }}</li>
+                        </a>
+                        <hr color="black" width="50%">
                     {% empty %}
-                      <li>No subtasks assigned to this task.</li>
+                        <li>No subtasks assigned to this task.</li>
                     {% endfor %}
+                  
                     
                   </ul>
                 {% if user.is_staff %}
@@ -83,7 +86,7 @@
                         {% endfor %}
                     </ul>
                     {% if task.id %}
-                        <a href="{% url 'subtask_create' task.id %}">Add Subtask</a>
+                        <a href="{% url 'subtask_create' task.id %}" id="subtask">Add Subtask</a>
                     {% else %}
                         <span class="text-muted">Save task before adding subtasks</span>
                     {% endif %}
@@ -150,7 +153,7 @@
     hr{
         margin-right:70%;
     }
-    #Container1 a{
+    #Container1 #subtask{
         background-color: blue;
         padding: 10px 20px;
         border-radius: 20px;

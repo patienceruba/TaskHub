@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from teams.models import Team
 
 
 
-class RecordRow(models.Model):
+class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False)
     description = models.TextField(null=False)
@@ -16,8 +17,7 @@ class RecordRow(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     progress = models.PositiveSmallIntegerField(default=0) 
     image = models.ImageField(upload_to='images/', null=True, blank=True)
-
-    
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)    
 
     def save(self, *args, **kwargs):
         previous_done = self.done
@@ -35,14 +35,22 @@ class RecordRow(models.Model):
         total_subtasks = self.subtasks.count()
         if total_subtasks > 0:
             completed_subtasks = self.subtasks.filter(done=True).count()
-            self.progress = int((completed_subtasks / total_subtasks) * 100)
+            new_progress = int((completed_subtasks / total_subtasks) * 100)
         else:
-            self.progress = 0
-        self.save()
+            new_progress = 0
+
+        if self.progress != new_progress or (self.progress == 100 and not self.done):
+            self.progress = new_progress
+            self.done = new_progress >= 100
+            super().save(update_fields=['progress', 'done', 'updated_date'])
+
+            if self.done:
+                TaskDone.objects.get_or_create(record=self, user=self.user)
+
 
         
 class TaskDone(models.Model):
-    record = models.OneToOneField(RecordRow, on_delete=models.CASCADE, related_name='task_done')
+    record = models.OneToOneField(Task, on_delete=models.CASCADE, related_name='task_done')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed_at = models.DateTimeField(auto_now_add=True)
 
@@ -52,7 +60,7 @@ class TaskDone(models.Model):
 
 
 class PDFDocument(models.Model):
-    record = models.ForeignKey(RecordRow, on_delete=models.CASCADE, related_name='pdf_documents')
+    record = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='pdf_documents')
     pdf = models.FileField(upload_to='pdfs/')
 
     def __str__(self):
@@ -67,11 +75,11 @@ class UserProfile(models.Model):
         return self.user.username
 
 class SubTask(models.Model):
-    record = models.ForeignKey(RecordRow, related_name='subtasks', on_delete=models.CASCADE)
+    record = models.ForeignKey(Task, related_name='subtasks', on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False)
     done = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
-    comment = models.CharField(max_length=100, blank=True, null=True)
+    comment = models.TextField()
 
     def save(self, *args, **kwargs):
         was_done = self.done

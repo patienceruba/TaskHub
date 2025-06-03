@@ -94,68 +94,84 @@
                         <h1>Available Tasks for You</h1>
                         <hr>
                         <div class="task-columns">
-                            {% for task in assigned_tasks %}
+                            {% if assigned_tasks %}
+                                {% for assigned in assigned_tasks %}
                                 <div class="content-item">
-                                    <a href="{% url 'task_detail' task.id %}">
-                                        <img src="{{ task.task.image.url }}" alt="{{ task.task.title }}" align="{{ task.task.title }}">
+                                    <a href="{% url 'task_detail' assigned.task.id %}">
+                                    <img src="{{ assigned.task.image.url }}" alt="{{ assigned.task.title }}">
                                     </a>
-                                    <a href="{% url 'task_detail' task.id %}">{{ task.task.title }}</a>
-                                    <p>{{ task.start_date }}</p>
+                                    <a href="{% url 'task_detail' assigned.task.id %}">{{ assigned.task.title }}</a>
+                                    <p>{{ assigned.task.start_date }}</p>
+                                    <p>{{ assigned.task.end_date }}</p>
 
-                                    {% if task.title in task_done_list %}
-                                        <div id="enroll">
-                                            <span>Already Enrolled</span>
-                                        </div>
-                                    {% else %}
-                                        {% if task.start_date and task.start_date < now %}
-                                            <div id="enroll">
-                                                <span class="enroll-disabled">Oops</span>
-                                            </div>
-                                        {% else %}
-                                            <div id="enroll">
-                                                <a href="{% url 'task_detail' task.id %}">Start</a>
-                                            </div>
-                                        {% endif %}
+                                {% if assigned.task.title in task_done_list %}
+                                    <div id="enroll"><span>Already Enrolled</span></div>
+                                {% else %}
+                                {% if assigned.task.start_date and assigned.task.start_date < now %}
+                                    <div><span class="enroll-disabled">Oops</span></div>
+                                {% else %}
+                                    <div id="enroll">
+                                        <a href="{% url 'task_detail' assigned.task.id %}">View Task</a>
+                                </div><!--handling assigned task-->
                                     {% endif %}
-                                </div>
+                            {% endif %}
+                                </div>    
                             {% endfor %}
+                            {% else %}
+                                <small>No tasks assigned to you yet.</small>
+                            {% endif %}
+
                         </div>
                     {% else %}
                         <p>No tasks assigned to you yet.</p>
                     {% endif %}
                 {% elif user.is_active %}
                     {% if assigned_tasks %}
-                        <h1>Available Tasks for You</h1>
-                        <div class="task-columns">
-                            {% for task in assigned_tasks %}
-                                <div class="content-item">
-                                    <a href="{% url 'task_detail' task.id %}">
-                                        <img src="{{ task.task.image.url }}" alt="{{ task.task.title }}" align="{{ task.task.title }}">
-                                    </a>
-                                    <a href="{% url 'task_detail' task.id %}">{{ task.task.title }}</a>
-                                    <p>{{ task.start_date }}</p>
-
-                                    {% if task.title in task_done_list %}
-                                        <div id="enroll">
-                                            <span>Already Enrolled</span>
-                                        </div>
-                                    {% else %}
-                                        {% if task.start_date and task.start_date < now %}
-                                            <div id="enroll">
-                                                <span class="enroll-disabled">Oops</span>
-                                            </div>
-                                        {% else %}
-                                            <div id="enroll">
-                                                <a href="{% url 'task_detail' task.id %}">Start</a>
-                                            </div>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p>No tasks assigned to you yet.</p>
+                    <h1>Available Tasks for You</h1>
                     {% endif %}
+            
+                    <div class="content-container">
+            
+                    {% if user.is_staff %}
+                        {% for task in tasks %}
+                        <div class="content-item">
+                        <a href="{% url 'task_detail' task.id %}">
+                            <img src="{{ task.image.url }}" alt="{{ task.title }}">
+                        </a>
+                        <a href="{% url 'task_detail' task.id %}">{{ task.title }}</a>
+                        <p>{{ task.start_date }}</p>
+                        <p>{{ task.end_date }}</p>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+            
+                    {% if assigned_tasks %}
+                        {% for assigned in assigned_tasks %}
+                        <div class="content-item">
+                        <a href="{% url 'task_detail' assigned.task.id %}">
+                            <img src="{{ assigned.task.image.url }}" alt="{{ assigned.task.title }}">
+                        </a>
+                        <a href="{% url 'task_detail' assigned.task.id %}">{{ assigned.task.title }}</a>
+                        <p>{{ assigned.task.start_date }}</p>
+                        <p>{{ assigned.task.end_date }}</p>
+            
+                        {% if assigned.task.title in task_done_list %}
+                            <div id="enroll"><span>Already Enrolled</span></div>
+                        {% else %}
+                            {% if assigned.task.start_date and assigned.task.start_date < now %}
+                            <div><span class="enroll-disabled">Oops</span></div>
+                            {% else %}
+                            <div id="enroll">
+                            <a href="{% url 'task_detail' assigned.task.id %}">View Task</a>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <small>No tasks assigned to you yet.</small>
+                    {% endif %}
+            
                 {% endif %}
             </div>
         </section>

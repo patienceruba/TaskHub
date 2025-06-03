@@ -1,0 +1,149 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="side-bar">
+    
+        <ul>
+            
+            <!--<div class="toggle-sidebar">
+                <span class="material-symbols-outlined" id="toggle-icon">menu</span>
+                <span class="sidebar-text"></span>
+            </div>-->
+            <a href="{% url 'dashboard' %}"><li>
+                <span class="material-symbols-outlined">dashboard_customize</span>
+                <span class="sidebar-text">Dashboard</span>
+            </li></a>
+    
+            {% if user.is_staff %}
+            <a href="{% url 'add' %}"><li>
+                <span class="material-symbols-outlined">add</span>
+                <span class="sidebar-text">Add Task</span>
+            </li></a>
+    
+            <a href="{% url 'home' %}"><li>
+                <span class="material-symbols-outlined">view_list</span>
+                <span class="sidebar-text">View Task</span>
+            </li></a>
+            {% endif %}
+    
+            <a href="{% url 'today' %}"><li>
+                <span class="material-symbols-outlined">today</span>
+                <span class="sidebar-text">Today</span>
+            </li></a>
+    
+            <a href="{% url 'event' %}"><li>
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span class="sidebar-text">Tasks</span>
+            </li></a>
+    
+            <a href="{% url 'task_done' %}"><li>
+                <span class="material-symbols-outlined">task</span>
+                <span class="sidebar-text">Done</span>
+            </li></a>
+    
+            <a href="{% url 'list_teams' %}" id="team"><li>
+                <span class="material-symbols-outlined">groups</span>
+                <span class="sidebar-text">Team</span></li></a>
+    
+            <a href="{% url 'calendar' %}"><li>
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span class="sidebar-text">Calendar</span>
+            </li></a>
+    
+    
+     
+        </ul>
+    </div>
+    <section id="dashboard-wrapper">
+        <section id="dashboard-section" class="section1">
+            <div id="Container1" class="wrapper1">
+                <h2> {{ subtask.title }}</h2>
+                <small>requirements: </small>
+                <p>{{ subtask.comment }}</p>
+                
+            </div>
+        </section>
+        <section class="footer">
+            <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
+        </section>
+    </section>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    #dashboard-wrapper{
+        background-color: #2c3e50;
+        width: auto;
+        height: auto;
+
+    }
+    #dashboard-section{
+        background-color: transparent;
+        border: none;
+        margin-top: 100px;
+    }
+    #user-info-section{
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+    #dashboard-section{
+        background-color: #fff;
+        margin-right: 250px;
+        margin-left: 250px;
+    }
+    #subtask {
+    background-color: #00d1d1; /* a richer aqua tone */
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: inline-block;
+    }
+
+    #subtask:hover {
+        background-color: #005bbb; /* bold blue on hover */
+        color: #ffffff;
+        transform: translateY(-2px); /* slight lift effect */
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    }
+    #Container1 li {
+        margin-top: 10px;
+        list-style: none;
+        
+    }
+    /* #Container1 li:hover {
+        background-color: #2c3e50;
+        padding: 4px;
+        width: 45%;
+        
+    } */
+    hr{
+        margin-right:70%;
+    }
+    #Container1 a{
+        background-color: blue;
+        padding: 10px 20px;
+        border-radius: 20px;
+        color: wheat;
+    }
+    #Container1.p{
+        margin: 50px 30px;
+    }
+</style>
+</body>
+</html>
+{% endblock %}

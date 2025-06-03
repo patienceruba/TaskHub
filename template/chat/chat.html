@@ -100,57 +100,82 @@
 <section class="footer">
     <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
 </section>
-
-<style>
-/* ... your CSS here ... */
-</style>
-
 <script>
+    // Get the current team ID from Django context
     const teamId = "{{ team.id }}";
-    console.log(teamId);
-    const chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/' + teamId + '/'
-    );
 
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
+    // Use 'wss' protocol if HTTPS, else 'ws'
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+
+    // Create WebSocket connection to the team chat endpoint
+    const chatSocket = new WebSocket(`${protocol}://${window.location.host}/ws/chat/${teamId}/`);
+
+    // DOM elements
+    const chatBox = document.getElementById('chat-box');
+    const chatForm = document.querySelector('#chat-form');
+    const messageInput = document.querySelector('#chat-input');
+
+    // Utility: Scroll chat box to bottom
+    function scrollChatToBottom() {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Handle incoming WebSocket messages
+    chatSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
         const message = data.message;
         const sender = data.sender;
 
-        const chatBox = document.getElementById('chat-box');
+
         const messageElement = document.createElement('div');
-        messageElement.className = 'message';
+        messageElement.classList.add('message');
+
         if (sender === '{{ user.username }}') {
             messageElement.classList.add('sent');
         } else {
             messageElement.classList.add('received');
         }
         messageElement.innerHTML = `<p><strong>${sender}:</strong> ${message}</p>`;
+
         chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        scrollChatToBottom();
     };
 
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
+
+    chatSocket.onopen = function() {
+        console.log('WebSocket connection established.');
     };
 
-    document.querySelector('#chat-form').onsubmit = function(e) {
-        e.preventDefault();
+    // Handle WebSocket errors
+    chatSocket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
 
-        const messageInputDom = document.querySelector('#chat-input');
-        const message = messageInputDom.value.trim();
+    // Handle WebSocket close event
+    chatSocket.onclose = function(event) {
+        console.warn('WebSocket connection closed unexpectedly:', event);
+    };
+
+    // Handle form submission to send message over WebSocket
+    chatForm.onsubmit = function(event) {
+        event.preventDefault();
+
+        const message = messageInput.value.trim();
         if (message.length === 0) return;
 
-        chatSocket.send(JSON.stringify({ 'message': message }));
+        // Send JSON-formatted message to server
+        chatSocket.send(JSON.stringify({ message }));
 
-        messageInputDom.value = '';
+        // Clear input field after sending
+        messageInput.value = '';
     };
 
+    // Scroll chat to bottom on page load to show latest messages
     window.onload = function() {
-        const chatBox = document.getElementById('chat-box');
-        chatBox.scrollTop = chatBox.scrollHeight;
+        scrollChatToBottom();
     };
 </script>
+
 <style>
     body {
     background-color: #2c3e50;

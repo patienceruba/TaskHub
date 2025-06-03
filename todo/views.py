@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import  RecordRow,  TaskDone, PDFDocument, UserProfile,SubTask
+from .models import  Task,  TaskDone, PDFDocument, UserProfile,SubTask
 from slide_profile.models import Image
 from django.utils import timezone
 from datetime import datetime
@@ -19,11 +19,12 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from teams.models import Team
 # Create your views here.
 @login_required
 @user_passes_test(lambda user: user.is_staff)
 def home(request):
-    task = RecordRow.objects.filter(user=request.user)
+    task = Task.objects.filter(user=request.user)
     context = {"tasks":task}
     return render(request, "todo/index.html", context)
 
@@ -35,42 +36,41 @@ def addRecord(request):
         description = request.POST.get('description')
         start_date_str = request.POST.get('starting-date')
         end_date_str = request.POST.get('ending-date')
-        image_file = request.FILES.get('image')  # File upload handling
+        team_id = request.POST.get('team')  # 👈 Get team from form
+        image_file = request.FILES.get('image')
 
-        if title and description:
+        error = None
+
+        if title and description and team_id:
             try:
-                # Parse dates with defaults for missing values
                 start_date = datetime.strptime(start_date_str, '%Y-%m-%d') if start_date_str else timezone.now()
                 end_date = datetime.strptime(end_date_str, '%Y-%m-%d') if end_date_str else None
+                team = get_object_or_404(Team, id=team_id)  # 👈 Fetch team
 
-                # If no image is uploaded, handle it (optional default image or None)
-                if not image_file:
-                    # Set a default image path if necessary (ensure your model supports it)
-                    image_file = None  # or "/static/images/default.jpg"
-
-                # Save record
-                RecordRow.objects.create(
-                    user=request.user,  # Ensure user is authenticated
+                Task.objects.create(
+                    user=request.user,
                     title=title,
                     description=description,
                     start_date=start_date,
                     end_date=end_date,
-                    image=image_file
+                    image=image_file if image_file else None,
+                    team=team  # 👈 Save the selected team
                 )
-                return redirect("home")  # Redirect on success
+                return redirect("home")
             except ValueError:
                 error = "Invalid date format. Please use YYYY-MM-DD."
         else:
-            error = "Title and description are required."
+            error = "All fields including team selection are required."
 
-        # Render the form with an error message
-        return render(request, "todo/addrecord.html", {"error": error})
+        teams = Team.objects.all()
+        return render(request, "todo/addrecord.html", {"error": error, "teams": teams})
 
-    return render(request, "todo/addrecord.html")
+    teams = Team.objects.all()
+    return render(request, "todo/addrecord.html", {"teams": teams})
 
 
 def deleteRow(request, pk):
-    item = get_object_or_404(RecordRow, pk=pk)
+    item = get_object_or_404(Task, pk=pk)
     if request.method == "POST":
         item.delete()
         messages.success(request, "The record was deleted successfully.")
@@ -79,7 +79,7 @@ def deleteRow(request, pk):
 
 
 def updateRecord(request, pk):
-    record = get_object_or_404(RecordRow, pk=pk)
+    record = get_object_or_404(Task, pk=pk)
 
     if request.method == "POST":
         title = request.POST.get('title')
@@ -123,7 +123,7 @@ def search(request):
 
     if query:
         # Filter records based on the search query (e.g., search by title or description)
-        results = RecordRow.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))  # Case-insensitive search
+        results = Task.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))  # Case-insensitive search
 
     # Redirect based on the 'redirect' parameter
     if redirect_from == 'regular':
@@ -178,7 +178,7 @@ def pdf_list(request):
 @login_required
 def task_done_view(request):
     # Retrieve all completed tasks for the logged-in user
-    image = RecordRow.objects.all()
+    image = Task.objects.all()
     task_done_list = TaskDone.objects.filter(user=request.user).order_by('-completed_at')
     context = {
         'task_done_list': task_done_list,"image":image
@@ -188,12 +188,12 @@ def task_done_view(request):
 
 def today_view(request):
     today = timezone.localdate()  # Local date without time
-    events_today = RecordRow.objects.filter(start_date__date=today)
+    events_today = Task.objects.filter(start_date__date=today)
     return render(request, 'todo/today.html', {'events_today': events_today})
 
 
 def dashboard_view(request):
-    total_tasks = RecordRow.objects.filter(user=request.user).count()+AssignedTask.objects.filter(user=request.user).count()
+    total_tasks = Task.objects.filter(user=request.user).count()+AssignedTask.objects.filter(user=request.user).count()
     task_done_list = TaskDone.objects.filter(user=request.user).order_by('-completed_at')
     total_tasks_completed = task_done_list.count()  # Count completed tasks
     assigned_tasks = AssignedTask.objects.filter(user=request.user).count()
@@ -209,25 +209,6 @@ def dashboard_view(request):
     return render(request, 'todo/dashboard.html', context)
 
 
-"""def login_view(request):
-    user = None  # Initialize user variable
-
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        # Authenticate the user
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('dashboard')  # Or any other page after login
-
-        else:
-            messages.error(request, "Invalid username or password.")
-            return redirect('login')  # Stay on the login page
-
-    return render(request, 'todo/login.html')"""
 
 def login_view(request):
     try:
@@ -264,7 +245,7 @@ def upload_task(request):
     if request.method == 'POST':
         # Create a new task
         task_name = request.POST.get('task_name')
-        task = RecordRow.objects.create(name=task_name, user=request.user)
+        task = Task.objects.create(name=task_name, user=request.user)
         request.session['new_task'] = True  # Set a session flag for the new task
 
         return redirect('task_list')  # Redirect to task list or wherever you want
@@ -282,8 +263,8 @@ def reset_task_notification(request):
 @login_required
 def task_detail(request, pk):
     # Retrieve the task based on the primary key (pk) or show 404 if not found
-    record = get_object_or_404(RecordRow, pk=pk)
-    is_owner = RecordRow.objects.filter(user= request.user)
+    record = get_object_or_404(Task, pk=pk)
+    is_owner = Task.objects.filter(user= request.user)
 
     # Pass the record (task) and its related subtasks to the template
     context = {
@@ -307,7 +288,7 @@ def slider_view(request):
 
 @login_required
 def create_subtask(request, record_id):
-    record = get_object_or_404(RecordRow, id=record_id)
+    record = get_object_or_404(Task, id=record_id)
 
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -327,12 +308,12 @@ def create_subtask(request, record_id):
 @login_required
 def task_dashboard(request):
     if request.user.is_staff:
-        tasks = RecordRow.objects.filter(user=request.user)  
+        tasks = Task.objects.filter(user=request.user)  
     else:
         tasks = None
 
     assigned_tasks = AssignedTask.objects.filter(user=request.user)  
-    task_done_list = [task.title for task in RecordRow.objects.filter(user=request.user)]  
+    task_done_list = [task.title for task in Task.objects.filter(user=request.user)]  
 
     now = timezone.now()
 
@@ -350,23 +331,11 @@ def success(request):
     return render(request, "todo/success.html")
 
 
-"""@login_required
-def task_progress(request):
-    # Get tasks for the logged-in user
-    tasks = RecordRow.objects.filter(user=request.user)
-
-    # Add a 'complete' attribute to each task based on progress
-    for task in tasks:
-        task.done = task.progress == 100 # If progress >= 100, mark as complete
-    
-    # Pass tasks to the template
-    return render(request, 'todo/index.html', {'tasks': tasks})
-"""
 
 def task_user_progress_view(request, task_id):
-    tasks = get_object_or_404(RecordRow, id=task_id)
+    tasks = get_object_or_404(Task, id=task_id)
     progress = tasks.get_user_progress(request.user)
-    view_progress = RecordRow.objects.filter(id__in=[p.record_id for p in progress])
+    view_progress = Task.objects.filter(id__in=[p.record_id for p in progress])
     view_progress+=progress
     return render(request, 'todo/index.html', {
         'task': tasks,
