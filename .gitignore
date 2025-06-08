@@ -11,3 +11,8 @@
 **/media/images/*.png
 **/media/images/*.jpg
 **/media/images/*.jpeg
+
+
+**/media/team_images/*.png
+**/media/team_images/*.jpg
+**/media/team_images/*.jpeg
