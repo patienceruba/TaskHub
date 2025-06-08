@@ -7,3 +7,7 @@
 **/media/profile_pics/*.jpg
 **/media/profile_pics/*.jpeg
 .env
+
+**/media/images/*.png
+**/media/images/*.jpg
+**/media/images/*.jpeg
