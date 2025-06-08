@@ -1,5 +1,9 @@
-.env
-# Ignore Django migration files
+# Ignore Django migration files except __init__.py
 **/migrations/*.py
 !**/migrations/__init__.py
-**/media/profile_pics/*.png/*jpg/*jpeg
+
+# Ignore all profile picture image files in media/profile_pics/
+**/media/profile_pics/*.png
+**/media/profile_pics/*.jpg
+**/media/profile_pics/*.jpeg
+.env
