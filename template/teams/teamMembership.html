@@ -77,7 +77,8 @@
                         {% endif %}
                         <br>
                        
-                        <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">View Details</a>
+                        <a href="{% url 'team_detail' item.team.id %}" id="view-details-btn">
+                            <span class="material-symbols-outlined">info</span></a>
                     </div>
                 </li>
                 {% endfor %}
@@ -155,9 +156,9 @@
             object-fit: cover;
         }
 
-        .content-item a {
+        /* .content-item a {
             text-decoration: none;
-            color: #007bff;
+            color: transparent;
             font-weight: bold;
             margin-bottom: 10px;
             text-align: center;
@@ -165,7 +166,7 @@
 
         .content-item a:hover {
             color: #0056b3;
-        }
+        } */
 
         .content-item p {
             font-size: 0.9rem;
@@ -183,18 +184,18 @@
             margin-top: 40px;
 
         }
-        #view-details-btn{
+        /* #view-details-btn{
             border: none;
-            back
-            ground: blue;
+            background: blue;
             padding: 10px 20px;
             color: white;
             border-radius: 10px;
             transition: 0.5s;
             background-color: blue;
-        }
+        } */
         #view-details-btn:hover{
             background-color: skyblue;
+            border-radius: 50px;
         }
         #img{
             margin-bottom: 10px;

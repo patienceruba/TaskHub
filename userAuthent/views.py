@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
@@ -17,10 +17,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
-
 from todo.models import UserProfile
 
-
+User = get_user_model()
 
 
 def register_view(request):
@@ -31,6 +30,8 @@ def register_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         password1 = request.POST.get('password1')
+        #add role.
+        job_role = request.POST['job_role']
         profile_picture = request.FILES.get('profile_picture')  # Handling the image upload
 
         # Password match validation
@@ -52,7 +53,8 @@ def register_view(request):
         user = User.objects.create_user(username=username, email=email, password=password)
         user.first_name = first_name
         user.last_name = last_name
-        user.is_active = False  
+        user.is_active = False
+        user.job_role = job_role  
         user.save()
 
         # Create UserProfile instance

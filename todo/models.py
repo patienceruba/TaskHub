@@ -1,13 +1,14 @@
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from teams.models import Team
+from django.conf import settings
 
 
 
 class Task(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False)
     description = models.TextField(null=False)
     done = models.BooleanField(default=False)
@@ -51,7 +52,7 @@ class Task(models.Model):
         
 class TaskDone(models.Model):
     record = models.OneToOneField(Task, on_delete=models.CASCADE, related_name='task_done')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     completed_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -68,9 +69,8 @@ class PDFDocument(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
-
     def __str__(self):
         return self.user.username
 

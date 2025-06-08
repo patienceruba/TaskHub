@@ -105,6 +105,15 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       font-size: 14px;
     }
+    .register select {
+      /* background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10'%3E%3Cpolygon points='7,10 0,0 14,0' fill='%233498db'/%3E%3C/svg%3E"); */
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+      width: 40%;
+      margin-right: 70%;
+    }
+
   </style>
 </head>
 <body>
@@ -126,6 +135,16 @@
         <input type="text" name="l-name" placeholder="Last name" id="l-name" required />
         <input type="text" name="username" placeholder="Username" id="username" required />
         <input type="email" name="email" placeholder="Email" id="email" required />
+        <select name="job_role" id="job_role" required>
+          <option value="">Select a role</option>
+          <option value="developer">Developer</option>
+          <option value="designer">Designer</option>
+          <option value="analyst">System Analyst</option>
+          <option value="qa">Quality Assurance</option>
+          <option value="pm">Project Manager</option>
+          <option value="hr">HR Manager</option>
+        </select>
+
         <input type="password" name="password" placeholder="Password" id="password" required />
         <input type="password" name="password1" placeholder="Re-enter password" id="password1" required />
         <input type="checkbox" name="terms" required /> Agree to the terms and conditions

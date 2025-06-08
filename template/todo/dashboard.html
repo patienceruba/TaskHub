@@ -71,7 +71,8 @@
             <div class="user-details">
                 <h3>{{ user.get_full_name }}</h3>
                 <p>Email: {{ user.email }}</p>
-                <p>Username: {{ user.username }}</p>
+                <!--<p>names: <small>{{ user.first_name }} {{user.last_name}}</small></p>-->
+                <p>Role: <small>{{user.job_role}}</small></p>
             </div>
         </div>
     </section>

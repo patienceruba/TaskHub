@@ -1,17 +1,17 @@
 from django.db import models
-from django.contrib.auth.models import User
-
+#from django.contrib.auth.models import User
+from django.conf import settings
 class Team(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='team_images/', blank=True, null=True)  # Add this line
     def __str__(self):
         return self.name
 
 class TeamMember(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="members")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_admin = models.BooleanField(default=False)
     joined_at = models.DateTimeField(auto_now_add=True)
 
@@ -23,7 +23,7 @@ class TeamMember(models.Model):
 
 class TeamMemberRequest(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="requests")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.TextField(blank=True)
     status = models.CharField(
         max_length=20, 

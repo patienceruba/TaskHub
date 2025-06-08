@@ -7,12 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test,login_required
-from django.core.mail import EmailMessage
-from django.core.exceptions import ValidationError
-from django.dispatch import receiver
-from django.db.models.signals import post_save
 from assigntask.models import AssignedTask
 from teams.models import TeamMember
 import json
@@ -20,6 +15,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from teams.models import Team
+
+
 # Create your views here.
 @login_required
 @user_passes_test(lambda user: user.is_staff)
@@ -54,7 +51,7 @@ def addRecord(request):
                     start_date=start_date,
                     end_date=end_date,
                     image=image_file if image_file else None,
-                    team=team  # 👈 Save the selected team
+                    team=team 
                 )
                 return redirect("home")
             except ValueError:

@@ -1,10 +1,11 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from django.conf import settings
 from todo.models import Task, SubTask
 
 class AssignedTask(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     task = models.ForeignKey(
         Task, 
         on_delete=models.CASCADE, 

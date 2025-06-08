@@ -32,7 +32,7 @@
                      alt="{{ user.username }}'s profile picture" width="30" height="30" id="profile-pic">
 
                 <div class="dropdown-menu" id="profile-dropdown">
-                    <h4>Settings</h4>
+                    <h4>{{user.username}}</h4>
                     <a href="{% url 'profile' %}">Edit Profile</a>
                     <a href="{% url 'person' %}">Person info</a>
                     <a href="{% url 'change_passwd' %}">Change password</a>
