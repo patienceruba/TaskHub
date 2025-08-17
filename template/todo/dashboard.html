@@ -15,7 +15,7 @@
             <span class="sidebar-text">Dashboard</span>
         </li></a>
 
-        {% if user.is_staff %}
+        {% if request.user.is_staff %}
         <a href="{% url 'add' %}"><li>
             <span class="material-symbols-outlined">add</span>
             <span class="sidebar-text">Add Task</span>
@@ -50,8 +50,6 @@
             <span class="material-symbols-outlined">calendar_month</span>
             <span class="sidebar-text">Calendar</span>
         </li></a>
-
-
  
     </ul>
 </div>

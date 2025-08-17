@@ -33,7 +33,7 @@ def addRecord(request):
         description = request.POST.get('description')
         start_date_str = request.POST.get('starting-date')
         end_date_str = request.POST.get('ending-date')
-        team_id = request.POST.get('team')  # 👈 Get team from form
+        team_id = request.POST.get('team')
         image_file = request.FILES.get('image')
 
         error = None
@@ -42,18 +42,18 @@ def addRecord(request):
             try:
                 start_date = datetime.strptime(start_date_str, '%Y-%m-%d') if start_date_str else timezone.now()
                 end_date = datetime.strptime(end_date_str, '%Y-%m-%d') if end_date_str else None
-                team = get_object_or_404(Team, id=team_id)  # 👈 Fetch team
+                team = get_object_or_404(Team, id=team_id)
 
-                Task.objects.create(
+                task = Task.objects.create(  # ✅ Capture created Task
                     user=request.user,
                     title=title,
                     description=description,
                     start_date=start_date,
                     end_date=end_date,
                     image=image_file if image_file else None,
-                    team=team 
+                    team=team
                 )
-                return redirect("home")
+                return redirect("subtask_create", task.id)  #redirect to task based on task.id
             except ValueError:
                 error = "Invalid date format. Please use YYYY-MM-DD."
         else:
@@ -65,7 +65,7 @@ def addRecord(request):
     teams = Team.objects.all()
     return render(request, "todo/addrecord.html", {"teams": teams})
 
-
+@user_passes_test(lambda u: u.is_staff)
 def deleteRow(request, pk):
     item = get_object_or_404(Task, pk=pk)
     if request.method == "POST":
@@ -74,7 +74,7 @@ def deleteRow(request, pk):
         return redirect("home")  # Replace "home" with the name of the view or URL to redirect to after deletion
     return render(request, "todo/delete.html", {"item": item})
 
-
+@user_passes_test(lambda u: u.is_staff)
 def updateRecord(request, pk):
     record = get_object_or_404(Task, pk=pk)
 
@@ -112,7 +112,7 @@ def updateRecord(request, pk):
     return render(request, "todo/update.html", {"record": record})
 
 
-
+@user_passes_test(lambda u: u.is_staff)
 def search(request):
     query = request.GET.get('search', '')  # Get the search query from the GET request
     redirect_from = request.GET.get('redirect', '')  # Check where the search came from
@@ -128,7 +128,7 @@ def search(request):
     else:
         return render(request, 'todo/search.html', {'results': results, 'query': query})
 
-
+@user_passes_test(lambda u: u.is_active)
 def calendar(request):
     # Get tasks assigned to the currently logged-in user
     assigned_tasks = AssignedTask.objects.filter(user=request.user)
@@ -188,7 +188,7 @@ def today_view(request):
     events_today = Task.objects.filter(start_date__date=today)
     return render(request, 'todo/today.html', {'events_today': events_today})
 
-
+@user_passes_test(lambda u: u.is_active)
 def dashboard_view(request):
     total_tasks = Task.objects.filter(user=request.user).count()+AssignedTask.objects.filter(user=request.user).count()
     task_done_list = TaskDone.objects.filter(user=request.user).order_by('-completed_at')
@@ -338,3 +338,5 @@ def task_user_progress_view(request, task_id):
         'task': tasks,
         'progress': progress,
     })
+
+

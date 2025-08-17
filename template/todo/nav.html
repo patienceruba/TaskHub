@@ -36,6 +36,12 @@
                     <a href="{% url 'profile' %}">Edit Profile</a>
                     <a href="{% url 'person' %}">Person info</a>
                     <a href="{% url 'change_passwd' %}">Change password</a>
+                    {% if request.user.is_superuser %}
+                        <a href="{% url 'register' %}">Register user</a>
+                        <a href="{% url 'add_image' %}">add login slide image</a>
+                    {% else%}
+                        <small></small>
+                    {% endif %}
                     <a href="{% url 'logout' %}">Logout</a>
                 </div>
             </div>
@@ -158,6 +164,8 @@
         display: none;
         z-index: 1000;
         overflow: hidden;
+        max-height: 300px;
+        overflow-y: auto;
     }
 
     .notification-dropdown.show {
@@ -181,9 +189,10 @@
     }
 </style>
 
-<!-- Script -->
+<!-- Scripts -->
 <script>
-    // Fetch Unread Notification Count
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch Unread Notification Count and notifications list
     async function fetchUnreadCount() {
         try {
             const response = await fetch('/api/unread-notifications/');
@@ -220,38 +229,79 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchUnreadCount();
-        setInterval(fetchUnreadCount, 30000); // Poll every 30 sec
+    fetchUnreadCount();
+    //setInterval(fetchUnreadCount, 30000); // Poll every 30 sec
 
-        // Profile Dropdown
-        const profilePic = document.getElementById("profile-pic");
-        const dropdownMenu = document.getElementById("profile-dropdown");
+    // Profile Dropdown toggle
+    const profilePic = document.getElementById("profile-pic");
+    const dropdownMenu = document.getElementById("profile-dropdown");
 
-        profilePic.addEventListener("click", function (event) {
-            dropdownMenu.classList.toggle("show");
-            event.stopPropagation();
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!profilePic.contains(event.target) && !dropdownMenu.contains(event.target)) {
-                dropdownMenu.classList.remove("show");
-            }
-        });
-
-        // Notification Bell Dropdown
-        const notificationBell = document.getElementById("notification-bell");
-        const notificationDropdown = document.getElementById("notification-dropdown");
-
-        notificationBell.addEventListener("click", function (event) {
-            notificationDropdown.classList.toggle("show");
-            event.stopPropagation(); // Prevent closing when clicking on bell itself
-        });
-
-        document.addEventListener("click", function (event) {
-            if (!notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
-                notificationDropdown.classList.remove("show");
-            }
-        });
+    profilePic.addEventListener("click", function (event) {
+        dropdownMenu.classList.toggle("show");
+        event.stopPropagation();
     });
+
+    document.addEventListener("click", function (event) {
+        if (!profilePic.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.remove("show");
+        }
+    });
+
+    // Notification Bell Dropdown toggle
+    const notificationBell = document.getElementById("notification-bell");
+    const notificationDropdown = document.getElementById("notification-dropdown");
+
+    notificationBell.addEventListener("click", function (event) {
+        notificationDropdown.classList.toggle("show");
+        event.stopPropagation(); // Prevent closing when clicking on bell itself
+        // Optional: reset badge on open
+        if (notificationDropdown.classList.contains('show')) {
+            document.getElementById('notification-count').style.display = 'none';
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!notificationBell.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.classList.remove("show");
+        }
+    });
+
+    // --- WebSocket for live notifications ---
+    const notificationCountBadge = document.getElementById('notification-count');
+
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const notificationsSocket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/notifications/`);
+
+    notificationsSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log('Notification received:', data);
+
+        // Update badge count
+        let count = parseInt(notificationCountBadge.textContent) || 0;
+        count += 1;
+        notificationCountBadge.textContent = count;
+        notificationCountBadge.style.display = 'inline-block';
+
+        // Add new notification to dropdown at the top
+        const newNotification = document.createElement('div');
+        newNotification.textContent = data.message || data.title || 'New notification';
+        newNotification.style.backgroundColor = '#114851'; // Highlight new item
+        newNotification.style.padding = '10px';
+        newNotification.style.borderBottom = '1px solid #1b4b50';
+        newNotification.style.cursor = 'pointer';
+
+        // Insert new notification at the top
+        if (notificationDropdown.querySelector('p.empty')) {
+            notificationDropdown.innerHTML = ''; // remove "No notifications"
+        }
+        notificationDropdown.insertBefore(newNotification, notificationDropdown.firstChild);
+    };
+
+    notificationsSocket.onclose = function(e) {
+        console.error('Notification socket closed unexpectedly. Attempting to reconnect in 5s...');
+        setTimeout(() => {
+            location.reload(); // Simple reload to re-establish WS on close
+        }, 5000);
+    };
+});
 </script>

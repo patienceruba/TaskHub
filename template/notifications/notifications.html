@@ -1,18 +1,22 @@
-{% extends 'base.html' %}
+<!--{% extends 'base.html' %}
 
 {% block content %}
-<h2>Notifications</h2>
+<h2>Your Notifications</h2>
 
 {% if notifications %}
     <ul>
-        {% for notification in notifications %}
-        <li style="{% if not notification.is_read %}font-weight: bold;{% endif %}">
-            {{ notification.message }} <br>
-            <small>{{ notification.created_at|date:"d M Y H:i" }}</small>
+    {% for notification in notifications %}
+        <li style="background-color: {% if not notification.is_read %}#dff0d8{% else %}#f8f8f8{% endif %}; padding: 10px; margin-bottom: 5px; border-radius: 5px;">
+            {{ notification.message }}
+            <small style="color: gray; font-size: 0.8em;">
+                — {{ notification.created_at|naturaltime }}
+            </small>
         </li>
-        {% endfor %}
+    {% endfor %}
     </ul>
 {% else %}
-    <p>You have no notifications.</p>
+    <p>No notifications yet.</p>
 {% endif %}
+
 {% endblock %}
+-->

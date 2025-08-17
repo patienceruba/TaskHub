@@ -69,14 +69,14 @@
             <p>{{ assigned.task.end_date }}</p>
 
             {% if assigned.task.title in task_done_list %}
-              <div id="enroll"><span>Already Enrolled</span></div>
+              <div id="enroll"><span class="enroll-disabled">Already Enrolled</span></div>
             {% else %}
               {% if assigned.task.start_date and assigned.task.start_date < now %}
-              <div><span class="enroll-disabled">Oops</span></div>
+                <div class="enroll-disabled">Enrollment Closed</div>
               {% else %}
-              <div id="enroll">
-                <a href="{% url 'task_detail' assigned.task.id %}">View Task</a>
-              </div>
+                <div id="enroll">
+                  <a href="{% url 'task_detail' assigned.task.id %}">View Task</a>
+                </div>
               {% endif %}
             {% endif %}
           </div>
@@ -94,12 +94,12 @@
   </section>
 </section>
 
-<!-- YOUR ORIGINAL CSS BELOW - UNTOUCHED -->
-
+<!-- Updated CSS Below -->
 <style type="text/css">
-body{
+body {
     background-color: #2c3e50;
 }
+
 .content-wrapper {
     padding: 20px;
     background-color: #2c3e50;
@@ -109,22 +109,10 @@ body{
     display: grid;
     gap: 20px;
     padding: 10px;
-    
-}
-.content-item{
-  width: 20%;
-}
-.content-container ul{
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
 }
 
-/* Styling for Content Items */
 .content-item {
+    width: 20%;
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -139,7 +127,6 @@ body{
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Styling for Images */
 .content-item img {
     width: 100%;
     height: auto;
@@ -149,7 +136,6 @@ body{
     object-fit: cover;
 }
 
-/* Styling for Titles */
 .content-item a {
     text-decoration: none;
     color: #007bff;
@@ -163,14 +149,12 @@ body{
     color: #0056b3;
 }
 
-/* Styling for Dates */
 .content-item p {
     font-size: 0.9rem;
     color: #555;
     margin: 5px 0;
 }
 
-/* Enrollment Section Styling */
 #enroll {
     margin-top: 10px;
 }
@@ -190,26 +174,30 @@ body{
 }
 
 .enroll-disabled {
-    color: red;
+    background-color: #dc3545;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
     font-size: 0.9rem;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
     .content-container {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width: 768px) {
     .content-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
     .content-container {
-        grid-template-columns: 1fr; /* Single column for very small screens */
+        grid-template-columns: 1fr;
     }
 }
 </style>

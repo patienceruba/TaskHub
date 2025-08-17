@@ -22,6 +22,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "daphne",
     "channels",
+    'rest_framework',
+    'django_celery_beat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +40,9 @@ INSTALLED_APPS = [
     'slide_profile',
     'corsheaders'
 ]
+
+
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -84,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'taskflow',  
         'USER': 'postgres',     
-        'PASSWORD': 'star12',  
+        'PASSWORD': 'star12@!',  
         'HOST': 'localhost',          
         'PORT': '5432',      }
 }

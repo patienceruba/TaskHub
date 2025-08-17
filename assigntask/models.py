@@ -11,7 +11,8 @@ class AssignedTask(models.Model):
         on_delete=models.CASCADE, 
         
     )
-    subtask = models.ForeignKey(SubTask, on_delete=models.CASCADE)
+    subtask = models.ForeignKey(SubTask, null=True, blank=True, on_delete=models.SET_NULL)
+
 
     progress = models.PositiveSmallIntegerField(
         default=0,
@@ -21,4 +22,6 @@ class AssignedTask(models.Model):
     date = models.DateField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f"{self.user.username}: {self.task.title} → {self.subtask.title}"
+        user = self.user.username if self.user else "Unknown User"
+        task = self.task.title if self.task else "No Task"
+        return f"{user} - {task}"

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Team, TeamMemberRequest, TeamMember
 from .forms import ApproveUserForm
 from django.http import JsonResponse
@@ -9,6 +9,7 @@ from django.http import HttpResponseForbidden
 from datetime import timedelta
 from django.utils import timezone
 
+@user_passes_test(lambda u: u.is_staff, login_url='no_permission')
 @login_required
 def create_team(request):
     if request.method == "POST":
@@ -52,6 +53,7 @@ def team_detail(request, team_id):
 
 # List All Teams
 
+@user_passes_test(lambda u: u.is_active, login_url='no_permission')
 @login_required
 def list_teams(request):
     teams = Team.objects.all()
@@ -97,7 +99,7 @@ def list_teams(request):
 
     return render(request, 'teams/list_teams.html', {'teams': teams_with_status})
 
-
+@user_passes_test(lambda u: u.is_active, login_url='no_permission')
 @login_required
 def join_team_request(request, pk):
     team = get_object_or_404(Team, id=pk)
@@ -142,6 +144,7 @@ def join_team_request(request, pk):
 
 
 # Manage Join Requests (Admin Only)
+@user_passes_test(lambda u: u.is_staff, login_url='no_permission')
 @login_required
 def manage_requests(request, team_id):
     team = get_object_or_404(Team, id=team_id)

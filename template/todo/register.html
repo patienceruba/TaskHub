@@ -144,6 +144,13 @@
           <option value="pm">Project Manager</option>
           <option value="hr">HR Manager</option>
         </select>
+        <div>
+            <label for="is_staff">is_staff</label>
+            <input type="checkbox" id="is_staff" name="is_staff" value="true">
+
+            <label for="is_superuser">is_superuser</label>
+            <input type="checkbox" id="is_superuser" name="is_superuser" value="true">
+        </div>
 
         <input type="password" name="password" placeholder="Password" id="password" required />
         <input type="password" name="password1" placeholder="Re-enter password" id="password1" required />
@@ -151,7 +158,7 @@
         <input type="submit" name="register" value="Register" id="register" />
       </form>
 
-      <p>Already have an account? <a href="{% url 'login' %}">Click here</a></p>
+      <p>back to your account<a href="{% url 'dashboard' %}">Click here</a></p>
     </div>
   </section>
 

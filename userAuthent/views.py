@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.auth.decorators import user_passes_test, login_required, user_passes_test
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -21,7 +21,7 @@ from todo.models import UserProfile
 
 User = get_user_model()
 
-
+@user_passes_test(lambda u: u.is_superuser, login_url='no_permission')
 def register_view(request):
     if request.method == 'POST':
         first_name = request.POST.get('f-name')
@@ -31,6 +31,8 @@ def register_view(request):
         password = request.POST.get('password')
         password1 = request.POST.get('password1')
         #add role.
+        is_staff = request.POST.get('is_staff') == 'true'
+        is_superuser = request.POST.get('is_superuser') == 'true'
         job_role = request.POST['job_role']
         profile_picture = request.FILES.get('profile_picture')  # Handling the image upload
 
@@ -54,7 +56,9 @@ def register_view(request):
         user.first_name = first_name
         user.last_name = last_name
         user.is_active = False
-        user.job_role = job_role  
+        user.job_role = job_role
+        user.is_staff = is_staff
+        user.is_superuser = is_superuser
         user.save()
 
         # Create UserProfile instance
@@ -172,7 +176,7 @@ def send_activation_email(request, user):
     )
 
     subject = 'Activate your account'
-    message = f'Hi {user.username}, please activate your account by clicking this link:\n{activation_link}'
+    message = f'Hi {user.username},please activate your account by clicking this link:\n{activation_link}'
 
     send_mail(subject, message, 'rubayitap7@gmail.com', [user.email])
     #return render(request, "todo/sentActivationEmail.html")
@@ -192,6 +196,63 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponse('Thank you for confirming your email. You can now login.')
+        return HttpResponse(f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Email Confirmed</title>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        text-align: center;
+                        padding-top: 100px;
+                    }}
+                    .popup {{
+                        background-color: #4CAF50;
+                        color: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        width: 400px;
+                        margin: auto;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                        opacity: 0;
+                        transform: translateY(-20px);
+                        transition: all 0.5s ease;
+                    }}
+                    .popup.show {{
+                        opacity: 1;
+                        transform: translateY(0);
+                    }}
+                </style>
+            </head>
+            <body>
+                <div id="popup" class="popup">
+                    ✅ Thank you for confirming your email.<br>
+                    Your username is <strong>{user.username}</strong>.<br>
+                    You can now log in.
+                </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {{
+                        var popup = document.getElementById("popup");
+
+                        // Show popup after small delay
+                        setTimeout(function() {{
+                            popup.classList.add("show");
+                        }}, 100);
+
+                        // Hide popup and redirect after 5 seconds
+                        setTimeout(function() {{
+                            popup.classList.remove("show");
+                            window.location.href = '/login/'; // change to your login URL name or path
+                        }}, 5000);
+                    }});
+                </script>
+            </body>
+            </html>
+            """)
+
+
     else:
         return HttpResponse('Activation link is invalid or expired.')

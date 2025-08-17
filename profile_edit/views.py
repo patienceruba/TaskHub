@@ -17,19 +17,26 @@ def profile_edit(request):
 def person(request):
     user = request.user
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
+        if user.is_superuser:
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+            user.save()
 
-        user.first_name = first_name
-        user.last_name = last_name
-        user.email = email
-        user.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Superusers permission is required to' \
+            'be able to edit their profile here.')
+            return redirect('person') 
+    else:        
+        pass
 
-        messages.success(request, 'Profile updated successfully!')
-        return redirect('dashboard')  # or any page you want
+    return render(request, 'profile_edit/person.html')
 
-    return render(request, 'profile_edit/person.html')  # your template path
 
 
 

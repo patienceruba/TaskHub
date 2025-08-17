@@ -60,22 +60,32 @@
 <section id="dashboard-wrapper">
         <section id="dashboard-section" class="section1">
             <div id="Container1" class="wrapper1">
-                <h2>Task Detail: {{ task.title }}</h2>
+                <h2>{{ task.title }}</h2>
                 <p><strong>Description:</strong> {{ task.description }}</p>
                 <p><strong>Due Date:</strong> {{ task.end_date }}</p>
                 <ul>
-                    {% for subtask in subtasks %}
-                        <a href="{% url 'view_assigned_subtask' pk=subtask.id %}">
-                        <li>{{ subtask }}</li>
-                        </a>
-                        <hr color="black" width="50%">
-                    {% empty %}
-                        <li>No subtasks assigned to this task.</li>
-                    {% endfor %}
-                  
+                {% for subtask in subtasks %}
+                    <li>
+                    <a href="{% url 'view_assigned_subtask' pk=subtask.id %}">
+                        {{ subtask.title }}
+                    </a>
                     
-                  </ul>
-                {% if user.is_staff %}
+                    <ul>
+                        {% for assignment in subtask.assignedtask_set.all %}
+                        <li><small>{{ assignment.user.username }}</small></li>
+                        {% empty %}
+                        <li><em>No users assigned.</em></li>
+                        {% endfor %}
+                    </ul>
+                    
+                    </li>
+                    <hr color="black" width="50%">
+                {% empty %}
+                    <li>No subtasks assigned to this task.</li>
+                {% endfor %}
+                </ul>
+
+              <!--  {% if user.is_staff %}
                     <h4>Assigned Users</h4>
                 
                     <ul>
@@ -91,7 +101,7 @@
                         <span class="text-muted">Save task before adding subtasks</span>
                     {% endif %}
                     
-                {% endif %}
+                {% endif %}-->
             </div>
         </section>
         <section class="footer">

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+
 urlpatterns = [
     path('', views.login_view, name='login'),
     path('home', views.home, name="home"),
@@ -20,5 +21,6 @@ urlpatterns = [
     path('record/<int:record_id>/subtask/create/', views.create_subtask, name='subtask_create'),
     path('total_task/', views.task_dashboard, name='total_task'),
     path("success/", views.success, name="success"),
+    
    
 ]

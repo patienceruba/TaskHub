@@ -48,29 +48,41 @@
     </div>
 
     <section id="dashboard-wrapper">
-        <!-- Profile Editing Form -->
+        <!-- Assign Task Form -->
         <section id="profile-edit-section" class="section1">
-            <!-- templates/assign_task.html -->
             <form method="post" action="">
                 {% csrf_token %}
                 <h3>Task Name: {{ task.title }}</h3>
+
                 <label for="user">Select User:</label>
-                <select name="user" id="user">
+                <select name="user" id="user" required>
                     {% for user in users %}
                       <option value="{{ user.id }}">{{ user.username }}</option>
                     {% endfor %}
                 </select>
-                  
-                  
+
                 <br><br>
+
+                <label for="subtask">Select Subtask:</label>
+                <select name="subtask" id="subtask" required>
+                    {% for subtask in subtasks %}
+                      <option value="{{ subtask.id }}">{{ subtask.title }}</option>
+                    {% empty %}
+                      <option disabled>No subtasks available</option>
+                    {% endfor %}
+                </select>
+
+                <br><br>
+
                 <button type="submit" class="btn">Assign Task</button>
             </form>
         </section>
 
         <section class="footer">
             <span><p>&copy; 2025 I-Mind. All Rights Reserved</p></span>
+        </section>
     </section>
-</section>
+
 <style>
 select{
     border: none;
@@ -232,5 +244,3 @@ input[type="email"] {
 
 
 {% endblock %}
-
-

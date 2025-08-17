@@ -218,14 +218,15 @@
     <!--display images on login form-->
     <div class="login-image" id="loginImage">
         {% for image in background_images %}
-            <div class="image-slide" style="background-image: url('{{ image.image.url }}');"></div>
+            <div class="image-slide" 
+            style="background-image: url('{{ image.image.url }}');"></div>
         {% endfor %}
     </div>
 
     <div class="login-form">
         <div class="message">
             {% if messages %}
-                {% for message in messages %}
+                {% for message in msgs %}
                     <div class="alert {{ message.tags }}">
                         {{ message }}
                     </div>
@@ -249,15 +250,27 @@
             <form method="POST" id="login-form" aria-labelledby="login-form">
                 {% csrf_token %}
                 <div class="input-group">
-                    <input type="text" name="username" id="username" placeholder="Username" required aria-label="Username">
+                    <input type="text" 
+                    name="username" 
+                    id="username" 
+                    placeholder="Username" 
+                    required aria-label="Username">
                 </div>
                 <div class="input-group">
-                    <input type="password" name="password" id="password" placeholder="Password" required aria-label="Password">
-                    <span id="show-password" class="show-password">👁️</span>
-                    <span id="hide-password" class="show-password" style="display:none;">🙈</span> 
+                    <input type="password" 
+                    name="password" 
+                    id="password" 
+                    placeholder="Password" 
+                    required aria-label="Password">
+                    <span id="show-password" 
+                    class="show-password">👁️</span>
+                    <span id="hide-password" 
+                    class="show-password" 
+                    style="display:none;">🙈</span> 
                 </div>
                 <label for="remember-me">
-                    <input type="checkbox" name="remember" id="remember-me" aria-label="Remember me"> Remember Me
+                    <input type="checkbox" name="remember" id="remember-me" aria-label="Remember me">
+                     Remember Me
                 </label>
                 <br/>
                 <a href="{% url 'password_reset_request' %}" class="forgot-password">Forgot Password?</a>
@@ -271,7 +284,10 @@
                 
             </div>
             
-            <small id="signup-link">Don't have an account? <a href="{% url 'register' %}">Sign up here</a></small>
+            <small id="signup-link" style="display: none;">
+                Don't have an account? 
+                <a href="{% url 'register' %}">Sign up here</a>
+            </small>
         </div>
     </div>
 </section>
