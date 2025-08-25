@@ -113,10 +113,11 @@
     {% else %}
         <p>You need to be an admin to approve or reject requests.</p>
     {% endif %}
+    <div class="footer">
+        <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
+    </div>
 </section>
-<section class="footer">
-    <span><p>&copy; 2025 I-Mind. All Rights Reserved.</p></span>
-</section>
+
 <style>
     /* General Styling */
 
@@ -211,7 +212,9 @@
     .status-rejected {
         color: red;
     }
-
+    .footer{
+        margin-left:400px;
+    }
     /* Responsive Design */
     @media (max-width: 600px) {
         .member-item,

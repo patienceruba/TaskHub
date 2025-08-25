@@ -6,580 +6,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="{% static '' %}" type="">
     <title>DoiZ</title>
-  
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
 
-
 <style type="text/css">
 
 .material-symbols-outlined{
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; /* Icon settings */
-    font-size: 20px; /* Icon size */
-    color: #3498db; /* Icon color */
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-size: 20px;
+    color: #3498db;
     vertical-align: middle;
 }
-</style>
-<style type="text/css">
-    /* General Styles */
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    box-sizing: border-box;
-}
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-h1, h2 {
-    margin: 0;
-}
+/* --- Full Original CSS --- */
+body, html { margin: 0; padding: 0; font-family: Arial, sans-serif; box-sizing: border-box; }
+a { text-decoration: none; color: inherit; }
+h1, h2 { margin: 0; }
 
 /* Navbar Styles */
-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 98%;
-    background-color: #2c3e50;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+nav { position: fixed; top: 0; left: 0; width: 98%; background-color: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+nav h1 a { color: white; font-size: 24px; }
+nav .nav { display: flex; align-items: center; }
+nav input[type="search"] { padding: 5px; margin-right: 10px; border: none; border-radius: 4px; outline: none; }
+nav ul { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
+nav ul p small a { color: white; }
+nav img { border-radius: 50%; margin: 0 10px; }
+.profile-dropdown h4{ padding-left: 20px; text-decoration: underline; }
 
-}
-
-nav h1 a {
-    color: white;
-    font-size: 24px;
-}
-
-nav .nav {
-    display: flex;
-    align-items: center;
-}
-
-nav input[type="search"] {
-    padding: 5px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 4px;
-    outline: none;
-}
-
-nav ul {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-nav ul p small a {
-    color: white;
-}
-
-nav img {
-    border-radius: 50%;
-    margin: 0 10px;
-}
-.profile-dropdown h4{
-        padding-left: 20px;
-        text-decoration: underline;
-    }
 /* Sidebar Styles */
-.side-bar {
-    position: fixed;
-    top: 60px; /* Adjust for navbar height */
-    left: 0;
-    width: 200px;
-    height: calc(100% - 60px); /* Adjust for navbar height */
-    background-color: #2c3e50;
-    color: white;
-    overflow-y: auto;
-    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
-
-}
-
-.side-bar .profile ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.profile{
-    margin-top: 50px;
-}
-.side-bar .profile ul a {
-    color: white;
-    display: block;
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-.side-bar .profile ul a:hover {
-    background-color: #444;
-}
-
-.side-bar .material-symbols-outlined {
-    margin-right: 10px;
-    vertical-align: middle;
-}
+.side-bar { position: fixed; top: 60px; left: 0; width: 200px; height: calc(100% - 60px); background-color: #2c3e50; color: white; overflow-y: auto; box-shadow: 2px 0px 5px rgba(0,0,0,0.2); transition: width 0.3s ease-in-out; }
+.side-bar.compact { width: 70px; }
+.side-bar.compact ul li span { display: block; text-align: center; }
+.side-bar ul li { display: flex; align-items: center; padding: 10px; transition: all 0.3s; }
+.side-bar.compact ul li { justify-content: center; }
+.side-bar.compact ul li span { margin-right: 0; }
+.side-bar.compact ul li::after { content: ""; display: none; }
+.side-bar ul li span { margin-right: 10px; }
+.side-bar.compact ul li span + span { display: none; }
+#toggle-icon{ cursor: pointer; }
 
 /* Main Content Wrapper */
-.wrapper {
-    display: flex;
-    margin-top: 60px; /* Adjust for navbar height */
-    margin-left: 200px; /* Adjust for sidebar width */
-}
-
-.section1 {
-    flex-grow: 1;
-    padding: 20px;
-}
-
-.dashboard-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
-}
-.search-container {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border-radius: 20px;
-    padding: 5px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.search-icon {
-    color: #2c3e50;
-    font-size: 20px;
-    margin-right: 5px;
-}
-
-.search-input-container {
-    display: flex;
-    align-items: center;
-}
-
-#search {
-    border: none;
-    outline: none;
-    padding: 5px 10px;
-    font-size: 14px;
-    border-radius: 20px;
-    width: 200px;
-}
-.dashboard-item {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    padding: 15px;
-    text-align: center;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.chart-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-around;
-}
-
-.chart-container {
-    flex: 1;
-    min-width: 300px;
-    max-width: 600px;
-    height: 300px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+.wrapper { display: flex; margin-top: 60px; margin-left: 200px; }
+.section1 { flex-grow: 1; padding: 20px; }
+.dashboard-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.search-container { display: flex; align-items: center; background-color: white; border-radius: 20px; padding: 5px 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.search-icon { color: #2c3e50; font-size: 20px; margin-right: 5px; }
+.search-input-container { display: flex; align-items: center; }
+#search { border: none; outline: none; padding: 5px 10px; font-size: 14px; border-radius: 20px; width: 200px; }
+.dashboard-item { background-color: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.chart-wrapper { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-around; }
+.chart-container { flex: 1; min-width: 300px; max-width: 600px; height: 300px; background-color: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
 /* Footer Styles */
-#footer {
-    text-align: center;
-    background-color: #333;
-    color: white;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 200px); /* Adjust for sidebar width */
-    margin-left: 200px; /* Adjust for sidebar width */
-    z-index: 1000;
-}
+#footer { text-align: center; background-color: #333; color: white; padding: 10px 0; position: fixed; bottom: 0; width: calc(100% - 200px); margin-left: 200px; z-index: 1000; }
 
-</style>
-
-
-<style type="text/css">
-    /* Dashboard Wrapper */
-#dashboard-wrapper {
-    padding: 20px;
-    background-color: #f5f5f5;
-    min-height: 100vh;
-    width: 100%;
-}
-
-/* User Info Section */
-#user-info-section {
-    display: flex;
-    justify-content: center;
+/* Dashboard Wrapper */
+#dashboard-wrapper { padding: 20px; background-color: #f5f5f5; min-height: 100vh; width: 100%; }
+#user-info-section { display: flex; justify-content: center; align-items: center; background-color: #ffffff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.user-info-container { display: flex; flex-direction: row; align-items: center; gap: 20px; }
+.user-profile img { border-radius: 50%; border: 3px solid #007bff; }
+.user-details h3 { margin: 0; font-size: 1.5rem; color: #2c3e50; }
+.user-details p { margin: 5px 0; color: #555; }
+.user-details form { margin-top: 10px; }
+.user-details form input { padding: 5px; font-size: 14px; border: 1px solid #ddd; border-radius: 5px; }
+.search-container{ margin-right: 450px; }
+.user-details form button { background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; }
+.user-details form button:hover { background-color: #0056b3; }
+#dashboard-section { background-color: #ffffff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.dashboard-item { transition: transform 0.2s, box-shadow 0.2s; }
+.dashboard-item:hover { transform: translateY(-5px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+/* .footer{
     align-items: center;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.user-info-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-}
-
-.user-profile img {
-    border-radius: 50%;
-    border: 3px solid #007bff;
-}
-
-.user-details h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #2c3e50;
-}
-
-.user-details p {
-    margin: 5px 0;
-    color: #555;
-}
-
-.user-details form {
-    margin-top: 10px;
-}
-
-.user-details form input {
-    padding: 5px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-.search-container{
-    margin-right: 450px;
-}
-
-
-.user-details form button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.user-details form button:hover {
-    background-color: #0056b3;
-}
-
-/* Dashboard Statistics Section */
-#dashboard-section {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.dashboard-item {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    padding: 15px;
-    text-align: center;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.dashboard-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.dashboard-item h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.dashboard-item p {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #007bff;
-}
-
-/* Chart Wrapper */
-.chart-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    color: rgb(255, 255, 255);
     justify-content: center;
-}
-
-.chart-container {
-    flex: 1;
-    min-width: 300px;
-    max-width: 600px;
-    height: 300px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-/* Footer Section */
-.footer {
-    text-align: center;
-    background-color: #333;
-    color: white;
-    padding: 10px 0;
-    margin-top: 20px;
-    border-radius: 5px;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.footer p {
-    margin: 0;
-    font-size: 14px;
-}
-/* Footer Styles */
-.footer {
-    position: fixed; 
-    bottom: 0; 
-    left: 0; /* Align to the left */
-    width: 100%; /* Take up the full width */
-    background-color: #2c3e50; /* Background color of footer */
-    color: white; /* Text color */
-    text-align: center; /* Center the text */
-    padding: 10px 0; /* Padding around the text */
-    font-size: 14px; /* Font size */
-    z-index: 1000; /* Ensure it's above other content */
-}
-
-/* Optional: Adjust for large content (if content is tall enough, footer will just appear at the bottom) */
-body {
-    
-    margin-bottom: 40px; /* Prevent the footer from covering any content if content is too short */
-}
-.hide{
-        margin-left: 90%;
+} */
+.footer{
+        margin-top: 200px;
+        margin-left: 20px;
     }
-</style>
-<style type="text/css">
-    /*____________________________________________________deletes___________________________________*/
-    /* delete_confirmation.css */
-#wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-    background-color: #f7f7f7;
-    font-family: Arial, sans-serif;
-}
+/* Responsive Sidebar for small devices */
+@media (max-width: 768px) {
+    .side-bar {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto;
+        white-space: nowrap;
+        box-shadow: none;
+    }
 
-#wrapper form {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
-}
+    .side-bar ul {
+        display: flex !important;
+        flex-direction: row !important;
+        padding: 0;
+        margin: 0;
+        width: auto;
+    }
 
-#sure {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 20px;
-    min-height: 40px;
-}
+    .side-bar ul li {
+        display: flex !important;
+        flex: 0 0 auto;
+        justify-content: center;
+        align-items: center;
+    }
 
-button {
-    background-color: #d9534f;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+    .side-bar ul li span {
+        display: inline !important;
+        margin-right: 5px;
+    }
 
-button:hover {
-    background-color: #c9302c;
-}
+    .side-bar ul li span + span {
+        display: inline !important;
+    }
 
-#nope {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 16px;
-    text-decoration: none;
-    color: #5bc0de;
-}
+    .side-bar ul li a {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px;
+        border-right: 1px solid rgba(255,255,255,0.2);
+    }
 
-#nope:hover {
-    text-decoration: underline;
-}
-/* Sidebar styles */
-.side-bar {
-    width: 200px; /* Full width */
-    transition: width 0.3s ease-in-out;
-    overflow: hidden;
-}
+    .side-bar ul li a:last-child { border-right: none; }
 
-.side-bar.compact {
-    width: 70px; /* Small sidebar */
-}
+    .wrapper { 
+        margin-left: 0 !important; 
+        margin-top: 60px; 
+        flex-direction: column; 
+    }
 
-.side-bar.compact ul li span {
-    display: block;
-    text-align: center;
-}
-
-.side-bar ul li {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    transition: all 0.3s;
-}
-
-.side-bar.compact ul li {
-    justify-content: center; /* Center icons */
-}
-
-.side-bar.compact ul li span {
-    margin-right: 0; /* Remove spacing */
-}
-
-.side-bar.compact ul li::after {
-    content: ""; /* Remove text */
-    display: none;
-}
-
-.side-bar ul li span {
-    margin-right: 10px;
-}
-
-.side-bar.compact ul li span + span {
-    display: none; /* Hide text */
-}
-#toggle-icon{
-    cursor: pointer;
+    .footer { width: 100%; margin-left: 0; }
 }
 
 </style>
-    {% include 'todo/nav.html' %}
-    {% block content %}
 
-    {% endblock %}
-    <script type="text/javascript" src="{% static 'javascript/placeholder.js' %}"></script>
-    <script type="text/javascript" src="{% static 'javascript/add.js' %}"></script>
-    <script type="text/javascript" src="{% static 'javascript/index.js' %}"></script>
-    <script type="text/javascript" src="{% static 'javascript/login.js' %}"></script>
-    <script type="text/javascript">
+{% include 'todo/nav.html' %}
+{% block content %}
+{% endblock %}
 
+<script type="text/javascript" src="{% static 'javascript/placeholder.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/add.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/index.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/login.js' %}"></script>
+
+<script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
     const toggleButton = document.getElementById("toggle-icon");
     const sidebar = document.querySelector(".side-bar");
-
     toggleButton.addEventListener("click", function() {
         sidebar.classList.toggle("compact");
     });
 });
-    </script>
+</script>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Ensure canvas elements exist
-        if (document.getElementById('taskBarChart') && document.getElementById('taskPieChart')) {
-            
-            const totalTasks = {{ total_tasks|default:"0" }};
-            const completedTasks = {{ tasks_completed|default:"0" }};
-            const upcomingEvents = {{ upcoming_events|default:"0" }};
-            const teamMembers = {{ team_members|default:"0" }};
-            const remainingTasks = totalTasks - completedTasks;
-    
-            // Bar Chart for Task Statistics
-            const taskBarChartCtx = document.getElementById('taskBarChart').getContext('2d');
-            new Chart(taskBarChartCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Total Tasks', 'Completed Tasks', 'Upcoming Events', 'Team Members'],
-                    datasets: [{
-                        label: 'Task Statistics',
-                        data: [totalTasks, completedTasks, upcomingEvents, teamMembers],
-                        backgroundColor: ['#007BFF', '#28a745', '#ffc107', '#6c757d'],
-                        borderColor: ['#0056b3', '#218838', '#e0a800', '#5a6268'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-    
-            // Pie Chart for Task Distribution (Completed vs Remaining)
-            const taskPieChartCtx = document.getElementById('taskPieChart').getContext('2d');
-            new Chart(taskPieChartCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Completed Tasks', 'Remaining Tasks'],
-                    datasets: [{
-                        label: 'Task Completion',
-                        data: [completedTasks, remainingTasks],
-                        backgroundColor: ['#28a745', '#ffc107'],
-                        borderColor: ['#218838', '#e0a800'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
-    
-        } else {
-            console.warn("Chart canvas elements not found!");
-        }
-    });
-    </script>
-    <style type="text/css">
-        .toggle-sidebar{
-            margin-left: 10px;
-        }
-    </style>
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById('taskBarChart') && document.getElementById('taskPieChart')) {
+        const totalTasks = {{ total_tasks|default:"0" }};
+        const completedTasks = {{ tasks_completed|default:"0" }};
+        const upcomingEvents = {{ upcoming_events|default:"0" }};
+        const teamMembers = {{ team_members|default:"0" }};
+        const remainingTasks = totalTasks - completedTasks;
+
+        const taskBarChartCtx = document.getElementById('taskBarChart').getContext('2d');
+        new Chart(taskBarChartCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Tasks', 'Completed Tasks', 'Upcoming Events', 'Team Members'],
+                datasets: [{
+                    label: 'Task Statistics',
+                    data: [totalTasks, completedTasks, upcomingEvents, teamMembers],
+                    backgroundColor: ['#007BFF', '#28a745', '#ffc107', '#6c757d'],
+                    borderColor: ['#0056b3', '#218838', '#e0a800', '#5a6268'],
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        });
+
+        const taskPieChartCtx = document.getElementById('taskPieChart').getContext('2d');
+        new Chart(taskPieChartCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Completed Tasks', 'Remaining Tasks'],
+                datasets: [{ label: 'Task Completion', data: [completedTasks, remainingTasks], backgroundColor: ['#28a745', '#ffc107'], borderColor: ['#218838', '#e0a800'], borderWidth: 1 }]
+            },
+            options: { responsive: true }
+        });
+    }
+});
+</script>
+
 </body>
 </html>

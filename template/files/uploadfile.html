@@ -1,0 +1,159 @@
+{% extends 'todo/main.html' %}
+{% load static %}
+
+{% block content %}
+<section class="wrapper">
+    <div class="side-bar">
+        <ul>
+            <a href="{% url 'dashboard' %}">
+                <li>
+                    <span class="material-symbols-outlined">dashboard_customize</span>
+                    <span class="sidebar-text">Dashboard</span>
+                </li>
+            </a>
+
+            {% if request.user.is_staff %}
+            <a href="{% url 'add' %}">
+                <li>
+                    <span class="material-symbols-outlined">add</span>
+                    <span class="sidebar-text">Add Task</span>
+                </li>
+            </a>
+
+            <a href="{% url 'home' %}">
+                <li>
+                    <span class="material-symbols-outlined">view_list</span>
+                    <span class="sidebar-text">View Task</span>
+                </li>
+            </a>
+            {% endif %}
+
+            <a href="{% url 'today' %}">
+                <li>
+                    <span class="material-symbols-outlined">today</span>
+                    <span class="sidebar-text">Today</span>
+                </li>
+            </a>
+
+            <a href="{% url 'event' %}">
+                <li>
+                    <span class="material-symbols-outlined">event_upcoming</span>
+                    <span class="sidebar-text">Tasks</span>
+                </li>
+            </a>
+
+            <a href="{% url 'task_done' %}">
+                <li>
+                    <span class="material-symbols-outlined">task</span>
+                    <span class="sidebar-text">Done</span>
+                </li>
+            </a>
+
+            <a href="{% url 'list_teams' %}" id="team">
+                <li>
+                    <span class="material-symbols-outlined">groups</span>
+                    <span class="sidebar-text">Team</span>
+                </li>
+            </a>
+
+            <a href="{% url 'calendar' %}">
+                <li>
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span class="sidebar-text">Calendar</span>
+                </li>
+            </a>
+        </ul>
+    </div>
+
+    <section class="uploadfile">
+        <h1>Upload File</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="file">Choose a file</label>
+                <input 
+                    type="file" 
+                    id="file" 
+                    name="filedoc" 
+                    class="file-input" 
+                    required
+                    accept=".pdf,.doc,.docx,.xls,.xlsx"
+                />
+
+            </div>
+            <button type="submit" class="btn">Upload</button>
+        </form>
+    </section>
+
+    <style>
+        .uploadfile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgb(29, 29, 54);
+            margin: auto;
+            margin-top: 5%;
+            padding: 40px;
+            border-radius: 10px;
+            width: 400px;
+            color: white;
+            text-align: center;
+        }
+
+        .uploadfile h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #f0f0f0;
+        }
+
+        .uploadfile form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .uploadfile label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .file-input {
+            padding: 10px;
+            border: 1px solid #666;
+            border-radius: 6px;
+            background: #1f1f3a;
+            color: white;
+        }
+
+        .file-input::file-selector-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .file-input::file-selector-button:hover {
+            background: #45a049;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</section>
+{% endblock %}

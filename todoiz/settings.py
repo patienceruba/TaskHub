@@ -31,14 +31,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'todo',
-    'notifications',
+    # 'notifications',
     "userAuthent",
     'teams',
-    'chat',
+    'chat.apps.ChatConfig',
     'assigntask',
     'profile_edit',
     'slide_profile',
-    'corsheaders'
+    'corsheaders',
+    'files',
+    'notifications.apps.NotificationsConfig',
 ]
 
 
@@ -184,3 +186,14 @@ CHANNEL_LAYERS = {
     },
 }
 AUTH_USER_MODEL = 'userAuthent.CustomUser'
+
+
+# settings.py
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

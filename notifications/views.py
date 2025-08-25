@@ -1,37 +1,27 @@
-from django.http import JsonResponse
+# notifications/views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .models import Notification
-from assigntask.models import AssignedTask
+from .serializers import NotificationSerializer
 
-def assign_task_to_user(user, task):
-    # Assign the task
-    AssignedTask.objects.create(user=user, task=task, progress="Not Started")
+@api_view(['GET'])
+def unread_notifications(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    unread_count = notifications.filter(is_read=False).count()
 
-    # Create a notification
-    Notification.objects.create(
-        user=user,
-        message=f"A new task '{task.title}' has been assigned to you."
-    )
-
-def get_notifications(request):
-    if request.user.is_authenticated:
-        # Fetch the most recent unread notifications (limit to 10)
-        unread_notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')[:10]
-
-        # Format for JSON
-        notifications_data = [
-            {
-                'message': notification.message,
-                'timestamp': notification.created_at.strftime("%Y-%m-%d %H:%M:%S")
-            }
-            for notification in unread_notifications
-        ]
-
-        return JsonResponse({
-            'unread_count': unread_notifications.count(),
-            'notifications': notifications_data
-        })
-
-    return JsonResponse({
-        'unread_count': 0,
-        'notifications': []
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response({
+        "unread_count": unread_count,
+        "notifications": serializer.data
     })
+
+
+@api_view(['PATCH'])
+def mark_notification_read(request, pk):
+    try:
+        notification = Notification.objects.get(pk=pk, user=request.user)
+        notification.is_read = True  # corrected field name
+        notification.save()
+        return Response({"success": True})
+    except Notification.DoesNotExist:
+        return Response({"success": False}, status=404)
